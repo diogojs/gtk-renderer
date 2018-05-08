@@ -146,6 +146,22 @@ void MainWindow::execute(const std::string& cmd) {
                 obj.translate(atoi(args[1].c_str()), atoi(args[2].c_str()));
             }
         }
+    } else if (command == "scale") {
+        auto obj_id = args[0];
+
+        for (auto& obj: renderer.display_file()) {
+            if (obj.name() == args[0]) {
+                obj.scale(atoi(args[1].c_str()), atoi(args[1].c_str()));
+            }
+        }
+    } else if (command == "rotate") {
+        auto obj_id = args[0];
+
+        for (auto& obj: renderer.display_file()) {
+            if (obj.name() == args[0]) {
+                obj.rotate_center(atoi(args[1].c_str()));
+            }
+        }
     }
 }
 
@@ -241,39 +257,39 @@ void MainWindow::setup()
         link_signal(event);
     }
 
-    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_cmdline")), "translate pol1 -30 0");
+    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_cmdline")), "translate polygon1 30 0");
 }
 
 void MainWindow::show() {
     gtk_widget_show_all(gtk_window);
 
-    renderer.add_object(Point{-10, -10});
-    //renderer.add_object(Line{0, 0, 40, 0});
-    //renderer.add_object(Line{100, 0, 100, 40});
-    auto points = std::vector<Point2D>{
-        Point2D{150-200, 150},
-        Point2D{175-200, 175},
-        Point2D{160-200, 200},
-        Point2D{140-200, 200},
-        Point2D{125-200, 175},
+    renderer.add_object(Point{100, 100});
+    renderer.add_object(Line{0, 0, 10, 0});
+    renderer.add_object(Line{0, 0, 0, 10});
+    auto points = std::vector<Point3D>{
+        Point3D{150-200, 150},
+        Point3D{175-200, 175},
+        Point3D{160-200, 200},
+        Point3D{140-200, 200},
+        Point3D{125-200, 175},
     };
     renderer.add_object(Polygon(points));
 
-    points = std::vector<Point2D>{
-        Point2D{-230, 100},
-        Point2D{-160, 100},
-        Point2D{-155, 80},
-        Point2D{-210, 60},
-        Point2D{-165, 20},
-        Point2D{-235, 25}
+    points = std::vector<Point3D>{
+        Point3D{-230, 100},
+        Point3D{-160, 100},
+        Point3D{-155, 80},
+        Point3D{-210, 60},
+        Point3D{-165, 20},
+        Point3D{-235, 25}
     };
     renderer.add_object(Polygon(points, true));
 
-    points = std::vector<Point2D>{
-        Point2D{0, 0},
-        Point2D{20, 40},
-        Point2D{80, -40},
-        Point2D{100, 0}
+    points = std::vector<Point3D>{
+        Point3D{0, 0},
+        Point3D{20, 40},
+        Point3D{80, -40},
+        Point3D{100, 0}
     };
     renderer.add_object(BezierCurve(points));
 

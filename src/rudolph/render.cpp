@@ -14,7 +14,7 @@ namespace {
 
     using Rect = geometry::Rect;
     using Size = geometry::Size;
-    using Point2D = geometry::Point2D;
+    using Point3D = geometry::Point3D;
 
 
     void clear(cairo_surface_t* surface) {
@@ -165,69 +165,63 @@ RenderTarget::~RenderTarget() {
     cairo_surface_destroy(surface());
 }
 
-Point2D RenderTarget::world_to_normal(double xw, double yw) {
-    Matrix<double> coord(1, 3);
-    coord(0, 0) = xw;
-    coord(0, 1) = yw;
-    coord(0, 2) = 1;
-
+Point3D RenderTarget::world_to_normal(double xw, double yw) {
+    Matrix<double> coord{xw, yw, 1};
+    
     double cos_vy = std::cos(camera_window.angle());
     double sin_vy = std::sin(camera_window.angle());
     double cam_x = camera_window.bottom_left().x();
     double cam_y = camera_window.bottom_left().y();
+    double cam_width = camera_window.width();
+    double cam_height = camera_window.height();
 
     // Normalized Coordinates
     // Translate to origin, rotate, and scale
-    auto vec = std::vector<double>{
-        cos_vy * 2/camera_window.width(), -sin_vy * 2/camera_window.height(), 0,
-        sin_vy * 2/camera_window.width(), cos_vy * 2/camera_window.height(), 0,
-        (-cos_vy*cam_x - sin_vy*cam_y)*2/camera_window.width(),
-        (sin_vy*cam_x - cos_vy*cam_y)*2/camera_window.height(),
-        1 };
-    Matrix<double> normalizer(vec);
-    normalizer.width(3);
-    normalizer.height(3);
+    Matrix<double> normalizer({
+        cos_vy * 2/cam_width, -sin_vy * 2/cam_height, 0,
+        sin_vy * 2/cam_width, cos_vy * 2/cam_height, 0,
+        (-cos_vy*cam_x - sin_vy*cam_y)*2/cam_width, (sin_vy*cam_x - cos_vy*cam_y)*2/cam_height, 1
+        },
+        3, 3
+    );
     
     coord = coord * normalizer;
 
-    return Point2D{coord(0, 0), coord(0, 1)};
+    return Point3D{coord(0, 0), coord(0, 1)};
 }
 
-Point2D RenderTarget::world_to_normal(Point2D p) {
+Point3D RenderTarget::world_to_normal(Point3D p) {
     return world_to_normal(p.x(), p.y());
 }
 
-Point2D RenderTarget::normal_to_viewport(double xw, double yw) {
-    Matrix<double> coord(1, 3);
-    coord(0, 0) = xw;
-    coord(0, 1) = yw;
-    coord(0, 2) = 1;
+Point3D RenderTarget::normal_to_viewport(double xw, double yw) {
+    Matrix<double> coord{xw, yw, 1};
 
     // Viewport Coordinates
-    auto vec = std::vector<double>{
+    Matrix<double> viewporter(
+        {
         (double)viewport.width()/2, 0, 0,
         0, (double)-viewport.height()/2, 0,
         viewport.top_left().x()+(double)viewport.width()/2, viewport.top_left().y()+(double)viewport.height()/2, 1
-    };
-    Matrix<double> viewporter(vec);
-    viewporter.width(3);
-    viewporter.height(3);
+        },
+        3, 3
+    );
     
     coord = coord * viewporter;
 
-    return Point2D{coord(0, 0), coord(0, 1)};
+    return Point3D{coord(0, 0), coord(0, 1)};
 }
 
-Point2D RenderTarget::normal_to_viewport(Point2D p) {
+Point3D RenderTarget::normal_to_viewport(Point3D p) {
     return normal_to_viewport(p.x(), p.y());
 }
 
-Point2D RenderTarget::world_to_viewport(double xw, double yw) {
+Point3D RenderTarget::world_to_viewport(double xw, double yw) {
     auto normalized = world_to_normal(xw, yw);
     return normal_to_viewport(normalized.x(), normalized.y());
 }
 
-Point2D RenderTarget::world_to_viewport(Point2D p) {
+Point3D RenderTarget::world_to_viewport(Point3D p) {
     return world_to_viewport(p.x(), p.y());
 }
 
@@ -235,7 +229,7 @@ void RenderTarget::clear() {
     ::clear(back_buffer_);
 }
 
-void RenderTarget::draw_point(Point2D p) {
+void RenderTarget::draw_point(Point3D p) {
     auto clipped = Clipper().clip_point(p);
 
     if (clipped) // if point was clipped it is out of the window
@@ -258,10 +252,10 @@ void RenderTarget::draw_point(Point2D p) {
     cairo_destroy(cr);
 }
 
-void RenderTarget::draw_line(Point2D a, Point2D b) {
+void RenderTarget::draw_line(Point3D a, Point3D b) {
     auto clipper = Clipper(ClipMethod::LIANG_BARSKY);
 
-    std::vector<Point2D> clipped = clipper.clip_line(a, b);
+    std::vector<Point3D> clipped = clipper.clip_line(a, b);
 
     if (clipped.size() > 0) {
         auto va = normal_to_viewport(clipped[0]);
@@ -280,13 +274,13 @@ void RenderTarget::draw_line(Point2D a, Point2D b) {
     }
 }
 
-void RenderTarget::draw_polygon(std::vector<Point2D> points, bool filled) {
+void RenderTarget::draw_polygon(std::vector<Point3D> points, bool filled) {
     auto cr = cairo_create(back_buffer_);
     cairo_set_source_rgb(cr, 0, 0, 1);
     cairo_set_line_width(cr, 1);
 
     auto clipper = Clipper();
-    std::vector<Point2D> clipped = clipper.clip_polygon(points);
+    std::vector<Point3D> clipped = clipper.clip_polygon(points);
 
     if (clipped.size() > 0) {
         // Move to first point
@@ -311,13 +305,13 @@ void RenderTarget::draw_polygon(std::vector<Point2D> points, bool filled) {
     cairo_destroy(cr);
 }
 
-void RenderTarget::draw_curve(std::vector<Point2D> points) {
+void RenderTarget::draw_curve(std::vector<Point3D> points) {
     auto cr = cairo_create(back_buffer_);
     cairo_set_source_rgb(cr, 0, 0, 1);
     cairo_set_line_width(cr, 1);
 
     auto clipper = Clipper();
-    std::vector<Point2D> clipped = clipper.clip_curve(points);
+    std::vector<Point3D> clipped = clipper.clip_curve(points);
 
     if (clipped.size() > 0) {
         // Move to first point

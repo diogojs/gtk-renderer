@@ -1,6 +1,8 @@
 #ifndef RUDOLPH_GEOMETRY_H
 #define RUDOLPH_GEOMETRY_H
 
+#include <memory>
+
 #include "matrix.h"
 
 namespace rudolph {
@@ -17,15 +19,15 @@ struct Size {
 };
 
 
-struct Point2D {
+struct Point3D {
     Matrix<double> data;
     
-    Point2D():
-        data{ *(new std::vector<double>{0, 0, 1}) }
+    Point3D():
+        data{0, 0, 0, 1}
     {}
 
-    Point2D(double x, double y):
-        data{ *(new std::vector<double>{x, y, 1}) }
+    Point3D(double x, double y, double z = 0):
+        data{x, y, z, 1}
     {}
 
     double& x() {
@@ -36,6 +38,10 @@ struct Point2D {
         return data(0, 1);
     }
 
+    double& z() {
+        return data(0, 2);
+    }
+
     const double& x() const {
         return data(0, 0);
     }
@@ -44,24 +50,33 @@ struct Point2D {
         return data(0, 1);
     }
 
-    Point2D& operator+=(const Point2D& p);
-    Point2D& operator-=(const Point2D& p);
-    bool operator==(const Point2D& p);
+    const double& z() const {
+        return data(0, 2);
+    }
 
-    void translate(double dx, double dy);
-    void scale(double sx, double sy);
-    void rotate(double angle);
+    Point3D& operator+=(const Point3D& p);
+    Point3D& operator-=(const Point3D& p);
+    bool operator==(const Point3D& p);
 
+    void translate(double dx, double dy, double dz = 0);
+    void scale(double sx, double sy, double sz = 1);
+    void rotate_x(double angle);
+    void rotate_y(double angle);
+    void rotate_z(double angle);
 };
 
-Point2D operator-(const Point2D&);
-Point2D operator+(const Point2D&, const Point2D&);
-Point2D operator-(const Point2D&, const Point2D&);
-Point2D operator*(const Point2D&, int);
-Point2D operator*(const Point2D&, double);
-Point2D operator*(int value, const Point2D& p);
-Point2D operator*(double value, const Point2D& p);
+Point3D operator-(const Point3D&);
+Point3D operator+(const Point3D&, const Point3D&);
+Point3D operator-(const Point3D&, const Point3D&);
+Point3D operator*(const Point3D&, int);
+Point3D operator*(const Point3D&, double);
+Point3D operator*(int value, const Point3D& p);
+Point3D operator*(double value, const Point3D& p);
 
+struct Edge {
+    std::shared_ptr<Point3D> a;
+    std::shared_ptr<Point3D> b;
+}
 
 struct Rect {
     double x{0};

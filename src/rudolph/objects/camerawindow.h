@@ -6,15 +6,15 @@
 namespace rudolph {
 
 class CameraWindow {
-    using Point2D = geometry::Point2D;
+    using Point3D = geometry::Point3D;
 public:
     CameraWindow():
-        _top_right{Point2D{200, 100}},
-        _bottom_left{Point2D{0, 0}},
+        _top_right{Point3D{200, 100}},
+        _bottom_left{Point3D{0, 0}},
         _angle{0}
     {}
 
-    CameraWindow(Point2D bottom_left, Point2D top_right):
+    CameraWindow(Point3D bottom_left, Point3D top_right):
         _top_right{top_right},
         _bottom_left{bottom_left},
         _angle{0}
@@ -26,11 +26,11 @@ public:
         _angle{0}
     {}
 
-    Point2D top_right() const {
+    Point3D top_right() const {
         return _top_right;
     }
 
-    Point2D bottom_left() const {
+    Point3D bottom_left() const {
         return _bottom_left;
     }
 
@@ -62,8 +62,8 @@ public:
     }
 
   private:
-    Point2D _top_right;
-    Point2D _bottom_left;
+    Point3D _top_right;
+    Point3D _bottom_left;
     double _angle;
 };
 

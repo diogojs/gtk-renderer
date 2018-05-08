@@ -20,24 +20,24 @@ namespace rudolph {
  * Abstracts the idea of an output drawing target.
  */
 class RenderTarget {
-    using Point2D = geometry::Point2D;
+    using Point3D = geometry::Point3D;
     using Size = geometry::Size;
 public:
     RenderTarget();
     ~RenderTarget();
 
-    Point2D world_to_normal(double xw, double yw);
-    Point2D world_to_normal(Point2D p);
-    Point2D normal_to_viewport(double xw, double yw);
-    Point2D normal_to_viewport(Point2D p);
-    Point2D world_to_viewport(double xw, double yw);
-    Point2D world_to_viewport(Point2D p);
+    Point3D world_to_normal(double xw, double yw);
+    Point3D world_to_normal(Point3D p);
+    Point3D normal_to_viewport(double xw, double yw);
+    Point3D normal_to_viewport(Point3D p);
+    Point3D world_to_viewport(double xw, double yw);
+    Point3D world_to_viewport(Point3D p);
 
     void clear();
-    void draw_point(Point2D);
-    void draw_line(Point2D, Point2D);
-    void draw_polygon(std::vector<Point2D> points, bool filled);
-    void draw_curve(std::vector<Point2D> points);
+    void draw_point(Point3D);
+    void draw_line(Point3D, Point3D);
+    void draw_polygon(std::vector<Point3D> points, bool filled);
+    void draw_curve(std::vector<Point3D> points);
     void draw_viewport();
     void move_camera(double dx, double dy);
 

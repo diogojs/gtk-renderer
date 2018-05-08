@@ -6,9 +6,9 @@
 int counter = 0;
 namespace rudolph {
 
-using Point2D = geometry::Point2D;
+using Point3D = geometry::Point3D;
 
-int Clipper::region_code(Point2D p) {
+int Clipper::region_code(Point3D p) {
     int reg_code = 0;
 
     if (p.x() < edge_left)
@@ -23,27 +23,27 @@ int Clipper::region_code(Point2D p) {
     return reg_code;
 }
 
-bool Clipper::clip_point(Point2D a) {
+bool Clipper::clip_point(Point3D a) {
     int reg_code = region_code(a);
     return (reg_code != 0);
 }
 
-std::vector<Point2D> Clipper::clip_line(Point2D a, Point2D b) {
+std::vector<Point3D> Clipper::clip_line(Point3D a, Point3D b) {
     if (_method == ClipMethod::COHEN_SUTHERLAND)
         return cohen_sutherland(a, b);
     if (_method == ClipMethod::LIANG_BARSKY)
         return liang_barsky(a, b);
 }
 
-std::vector<Point2D> Clipper::cohen_sutherland(Point2D a, Point2D b) {
-    Point2D points[2] {a, b};
+std::vector<Point3D> Clipper::cohen_sutherland(Point3D a, Point3D b) {
+    Point3D points[2] {a, b};
     int reg_code[2] { region_code(a), region_code(b) };
 
     if (!(reg_code[0] | reg_code[1])) {
-        return std::vector<Point2D>{a, b};
+        return std::vector<Point3D>{a, b};
     }
     else if (reg_code[0] & reg_code[1]) {
-        return std::vector<Point2D>{};
+        return std::vector<Point3D>{};
     }
     else {
         double m = (b.y() - a.y())/(b.x() - a.x());
@@ -52,37 +52,37 @@ std::vector<Point2D> Clipper::cohen_sutherland(Point2D a, Point2D b) {
             if (reg_code[i] & (int)RegionCode::LEFT) {
                 y = m*(edge_left - points[i].x()) + points[i].y();
                 if (y > edge_up && y < edge_down)
-                    points[i] = Point2D{edge_left, y};
+                    points[i] = Point3D{edge_left, y};
                 else
-                    return std::vector<Point2D>{};
+                    return std::vector<Point3D>{};
             }
             if (reg_code[i] & (int)RegionCode::RIGHT) {
                 y = m*(edge_right - points[i].x()) + points[i].y();
                 if (y > edge_up && y < edge_down)
-                    points[i] = Point2D{edge_right, y};
+                    points[i] = Point3D{edge_right, y};
                 else
-                    return std::vector<Point2D>{};
+                    return std::vector<Point3D>{};
             }
             if (reg_code[i] & (int)RegionCode::UP) {
                 x = points[i].x() + (1/m) * (edge_up - points[i].y());
                 if (x > edge_left && x < edge_right)
-                    points[i] = Point2D{x, edge_up};
+                    points[i] = Point3D{x, edge_up};
                 else
-                    return std::vector<Point2D>{};
+                    return std::vector<Point3D>{};
             }
             if (reg_code[i] & (int)RegionCode::DOWN) {
                 x = points[i].x() + (1/m) * (edge_down - points[i].y());
                 if (x > edge_left && x < edge_right)
-                    points[i] = Point2D{x, edge_down};
+                    points[i] = Point3D{x, edge_down};
                 else
-                    return std::vector<Point2D>{};
+                    return std::vector<Point3D>{};
             }
         }
     }
-    return std::vector<Point2D>{points[0], points[1]};
+    return std::vector<Point3D>{points[0], points[1]};
 }
 
-std::vector<Point2D> Clipper::liang_barsky(Point2D a, Point2D b) {
+std::vector<Point3D> Clipper::liang_barsky(Point3D a, Point3D b) {
     double p1 = -(b.x() - a.x());
     double p2 = -p1;
     double p3 = -(b.y() - a.y());
@@ -99,7 +99,7 @@ std::vector<Point2D> Clipper::liang_barsky(Point2D a, Point2D b) {
     negarr[0] = 0;
 
     if ((p1 == 0 && q1 < 0) || (p2 == 0 && q2 < 0) || (p3 == 0 && q3 < 0) || (p4 == 0 && q4 < 0)) {
-        return std::vector<Point2D>{};
+        return std::vector<Point3D>{};
     }
     if (p1 != 0) {
         double r1 = q1 / p1;
@@ -130,7 +130,7 @@ std::vector<Point2D> Clipper::liang_barsky(Point2D a, Point2D b) {
     rn2 = *std::min_element(posarr, posarr + posind);
 
     if (rn1 > rn2)  {
-        return std::vector<Point2D>{};
+        return std::vector<Point3D>{};
     }
 
     xn1 = a.x() + p2 * rn1;
@@ -139,11 +139,11 @@ std::vector<Point2D> Clipper::liang_barsky(Point2D a, Point2D b) {
     xn2 = a.x() + p2 * rn2;
     yn2 = a.y() + p4 * rn2;
 
-    return std::vector<Point2D>{ Point2D{xn1, yn1}, Point2D{xn2, yn2} };
+    return std::vector<Point3D>{ Point3D{xn1, yn1}, Point3D{xn2, yn2} };
 }
 
-std::vector<Point2D> Clipper::clip_polygon(std::vector<Point2D>& points) {
-    std::vector<Point2D> new_polygon{points};
+std::vector<Point3D> Clipper::clip_polygon(std::vector<Point3D>& points) {
+    std::vector<Point3D> new_polygon{points};
 
     // For each edge apply clipping
     for (auto i = 0u; i < clip_window.size(); ++i) {
@@ -154,8 +154,8 @@ std::vector<Point2D> Clipper::clip_polygon(std::vector<Point2D>& points) {
     return new_polygon;
 }
 
-std::vector<Point2D> Clipper::clip_curve(std::vector<Point2D>& points) {
-    std::vector<Point2D> new_curve{};
+std::vector<Point3D> Clipper::clip_curve(std::vector<Point3D>& points) {
+    std::vector<Point3D> new_curve{};
 
     bool went_out = false;
 
@@ -193,14 +193,14 @@ std::vector<Point2D> Clipper::clip_curve(std::vector<Point2D>& points) {
     return new_curve;
 }
 
-void Clipper::clip_pol_aux(std::vector<Point2D>& new_polygon, Point2D e1, Point2D e2) {
-    std::vector<Point2D> new_points{};
+void Clipper::clip_pol_aux(std::vector<Point3D>& new_polygon, Point3D e1, Point3D e2) {
+    std::vector<Point3D> new_points{};
 
     for (auto i = 0u; i < new_polygon.size(); ++i) {
         auto k = (i+1)%new_polygon.size();
         
-        Point2D a{new_polygon[i]};
-        Point2D b{new_polygon[k]};
+        Point3D a{new_polygon[i]};
+        Point3D b{new_polygon[k]};
 
         double a_pos = (e2.x()-e1.x()) * (a.y()-e1.y()) - (e2.y()-e1.y()) * (a.x()-e1.x());
         double b_pos = (e2.x()-e1.x()) * (b.y()-e1.y()) - (e2.y()-e1.y()) * (b.x()-e1.x());
@@ -219,20 +219,20 @@ void Clipper::clip_pol_aux(std::vector<Point2D>& new_polygon, Point2D e1, Point2
 
     if (new_points.size() == 0) {
         new_polygon.clear();
-        new_polygon.push_back(Point2D{0,0});
+        new_polygon.push_back(Point3D{0,0});
     } else {
         new_polygon = new_points;
     }
 }
 
-Point2D Clipper::intersection(Point2D e1, Point2D e2, Point2D a, Point2D b) {
+Point3D Clipper::intersection(Point3D e1, Point3D e2, Point3D a, Point3D b) {
     double x = (e1.x()*e2.y() - e1.y()*e2.x()) * (a.x() - b.x()) - (e1.x() - e2.x()) * (a.x()*b.y() - a.y()*b.x());
     x /= (e1.x() - e2.x()) * (a.y() - b.y()) - (e1.y() - e2.y()) * (a.x() - b.x());
 
     double y = (e1.x()*e2.y() - e1.y()*e2.x()) * (a.y() - b.y()) - (e1.y() - e2.y()) * (a.x()*b.y() - a.y()*b.x());
     y /= (e1.x() - e2.x()) * (a.y() - b.y()) - (e1.y() - e2.y()) * (a.x() - b.x());
 
-    return Point2D{x, y};
+    return Point3D{x, y};
 }
 
 }

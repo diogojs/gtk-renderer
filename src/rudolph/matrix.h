@@ -24,6 +24,12 @@ public:
         contents{vec}
     {}
 
+    Matrix(const std::initializer_list<T> &items, std::size_t height = 1, std::size_t width = 0):
+        width_{ (width==0)?items.size():width},
+        height_{height},
+        contents{items}
+    {}
+
     template <typename U>
     friend class Matrix;
 
