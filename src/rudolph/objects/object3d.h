@@ -4,7 +4,6 @@
 #include <vector>
 #include "../render.h"
 #include "../geometry.h"
-#include "../matrix.h"
 
 namespace rudolph {
 namespace objects {
@@ -19,7 +18,7 @@ public:
         _edges{std::move(edges)},
         scn_points{_points},
         scn_valid{false},
-        _id{polygons_id++},
+        _id{objects_id++},
         _name{"object" + std::to_string(_id)}
     {}
 

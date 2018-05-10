@@ -12,7 +12,9 @@ void Object3D::draw(RenderTarget& target) {
         }
         scn_valid = true;
     }
-    target.draw_polygon(scn_points, _filled);
+    for (auto i = 0u; i < _edges.size(); ++i) {
+        target.draw_line(_edges.a, _edges.b);
+    }
 }
 
 Point3D Object3D::center() const {
