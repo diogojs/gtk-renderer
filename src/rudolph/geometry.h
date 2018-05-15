@@ -73,13 +73,14 @@ Point3D operator*(const Point3D&, double);
 Point3D operator*(int value, const Point3D& p);
 Point3D operator*(double value, const Point3D& p);
 
-struct Edge {
-    Edge(Point3D& _a, Point3D& _b):
-        a{std::make_shared<Point3D>(_a)}, b{std::make_shared<Point3D>(_b)}
+typedef std::pair<unsigned, unsigned> Edge;
+
+struct Face {
+    Face(unsigned a, unsigned b, unsigned c):
+        edges{ a, b, c }
     {}
 
-    std::shared_ptr<Point3D> a;
-    std::shared_ptr<Point3D> b;
+    std::vector<unsigned> edges;
 };
 
 struct Rect {

@@ -134,6 +134,7 @@ public:
 private:
     std::vector<Point3D> _points;
     std::vector<Point3D> scn_points;
+    
     bool scn_valid;
     unsigned _id;
     std::string _name;

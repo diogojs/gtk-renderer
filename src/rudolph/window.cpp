@@ -16,6 +16,7 @@ namespace rudolph {
 using namespace rudolph::objects;
 using Size = geometry::Size;
 using Edge = geometry::Edge;
+using Face = geometry::Face;
 
 void on_close(GtkWidget* btn, gpointer* data) {
     reinterpret_cast<MainWindow*>(data)->close();
@@ -304,13 +305,22 @@ void MainWindow::show() {
     };
 
     auto xedges = std::vector<Edge> {
-        Edge( xpoints[0], xpoints[1] ),
-        Edge( xpoints[1], xpoints[2] ),
-        Edge( xpoints[2], xpoints[3] ),
-        Edge( xpoints[3], xpoints[4] ),
-        Edge( xpoints[4], xpoints[0] )
+        std::make_pair(0, 1),
+        std::make_pair(1, 2),
+        std::make_pair(2, 3),
+        std::make_pair(3, 4),
+        std::make_pair(4, 0),
+        std::make_pair(2, 0),
+        std::make_pair(3, 0)
     };
-    renderer.add_object(Object3D(xpoints, xedges));
+
+    auto xfaces = std::vector<Face> {
+        Face( 0, 1, 2 ),
+        Face( 0, 2, 3 ),
+        Face( 0, 3, 4 )
+    };
+
+    renderer.add_object(Object3D(xpoints, xedges, xfaces));
 
     update_list();
 }

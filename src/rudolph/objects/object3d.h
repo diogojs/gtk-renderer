@@ -10,12 +10,14 @@ namespace objects {
 
 using Point3D = geometry::Point3D;
 using Edge = geometry::Edge;
+using Face = geometry::Face;
 
 class Object3D {
 public:
-    Object3D(std::vector<Point3D> points, std::vector<Edge> edges):
+    Object3D(std::vector<Point3D> points, std::vector<Edge> edges, std::vector<Face> faces):
         _points{std::move(points)},
         _edges{std::move(edges)},
+        _faces{std::move(faces)},
         scn_points{_points},
         scn_valid{false},
         _id{objects_id++},
@@ -42,8 +44,10 @@ private:
     std::vector<Point3D> _points;
     std::vector<Point3D> scn_points;
     std::vector<Edge> _edges;
-    bool scn_valid;
+    std::vector<Face> _faces;
+
     unsigned _id;
+    bool scn_valid;
     std::string _name;
     
     const std::string _type{"Object"};

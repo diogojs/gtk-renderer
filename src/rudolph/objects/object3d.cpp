@@ -1,13 +1,21 @@
 #include "object3d.h"
 
+#include <iostream>
+
 namespace rudolph {
 namespace objects {
 
 unsigned int Object3D::objects_id = 0;
 
 void Object3D::draw(RenderTarget& target) {
+    if (!scn_valid) {
+        for (auto i = 0u; i < scn_points.size(); ++i) {
+            scn_points[i] = target.world_to_normal(_points[i]);
+        }
+        scn_valid = true;
+    }
     for (auto i = 0u; i < _edges.size(); ++i) {
-        target.draw_line( target.world_to_normal( *(_edges[i].a) ), target.world_to_normal( *(_edges[i].b) ) );
+        target.draw_line( scn_points[_edges[i].first], scn_points[_edges[i].second]);
     }
 }
 
