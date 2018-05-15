@@ -302,6 +302,7 @@ void MainWindow::show() {
         Point3D{140, 200},
         Point3D{125, 175}
     };
+
     auto xedges = std::vector<Edge> {
         Edge( xpoints[0], xpoints[1] ),
         Edge( xpoints[1], xpoints[2] ),
