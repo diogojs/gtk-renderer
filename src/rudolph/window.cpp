@@ -296,18 +296,18 @@ void MainWindow::show() {
     renderer.add_object(BezierCurve(points));
 
     auto xpoints = std::vector<Point3D>{
-        Point3D{150-200, 150},
-        Point3D{175-200, 175},
-        Point3D{160-200, 200},
-        Point3D{140-200, 200},
-        Point3D{125-200, 175},
+        Point3D{150, 150},
+        Point3D{175, 175},
+        Point3D{160, 200},
+        Point3D{140, 200},
+        Point3D{125, 175}
     };
     auto xedges = std::vector<Edge> {
-        Edge( &(xpoints[0]), &(xpoints[1]) ),
-        Edge( &(xpoints[1]), &(xpoints[2]) ),
-        Edge( &(xpoints[2]), &(xpoints[3]) ),
-        Edge( &(xpoints[3]), &(xpoints[4]) ),
-        Edge( &(xpoints[4]), &(xpoints[0]) )
+        Edge( xpoints[0], xpoints[1] ),
+        Edge( xpoints[1], xpoints[2] ),
+        Edge( xpoints[2], xpoints[3] ),
+        Edge( xpoints[3], xpoints[4] ),
+        Edge( xpoints[4], xpoints[0] )
     };
     renderer.add_object(Object3D(xpoints, xedges));
 

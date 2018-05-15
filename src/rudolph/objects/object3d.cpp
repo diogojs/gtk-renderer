@@ -13,7 +13,7 @@ void Object3D::draw(RenderTarget& target) {
         scn_valid = true;
     }
     for (auto i = 0u; i < _edges.size(); ++i) {
-        target.draw_line(_edges.a, _edges.b);
+        target.draw_line(*(_edges[i].a), *(_edges[i].b));
     }
 }
 

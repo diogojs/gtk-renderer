@@ -74,8 +74,8 @@ Point3D operator*(int value, const Point3D& p);
 Point3D operator*(double value, const Point3D& p);
 
 struct Edge {
-    Edge(Point3D* _a, Point3D* _b):
-        a{_a}, b{_b}
+    Edge(Point3D& _a, Point3D& _b):
+        a{std::make_shared<Point3D>(_a)}, b{std::make_shared<Point3D>(_b)}
     {}
 
     std::shared_ptr<Point3D> a;
