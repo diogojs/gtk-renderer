@@ -97,7 +97,8 @@ public:
         return contents.data();
     }
 
-    void to_string() const {
+    void to_string(std::string title = "") const {
+        std::cout << title << std::endl;
         for (auto i = 0; i < height_; ++i) {
             for (auto j = 0; j < width_; ++j) {
                 std::cout << (*this)(i, j) << " ";

@@ -40,9 +40,9 @@ public:
         return point;
     }
 
-    void translate(double dx, double dy);
+    void translate(double dx, double dy, double dz);
 
-    void scale(double sx, double sy);
+    void scale(double sx, double sy, double sz);
 
     void rotate_origin(double angle);
     void rotate_pin(double angle, Point3D pin);
@@ -84,9 +84,9 @@ public:
 
     Point3D center() const;
 
-    void translate(double dx, double dy);
+    void translate(double dx, double dy, double dz);
 
-    void scale(double sx, double sy);
+    void scale(double sx, double sy, double sz);
 
     void rotate_origin(double angle);
     void rotate_pin(double angle, Point3D pin);
@@ -123,9 +123,9 @@ public:
 
     Point3D center() const;
 
-    void translate(double dx, double dy);
+    void translate(double dx, double dy, double dz);
 
-    void scale(double sx, double sy);
+    void scale(double sx, double sy, double sz);
 
     void rotate_origin(double angle);
     void rotate_pin(double angle, Point3D pin);
@@ -156,8 +156,8 @@ public:
 
     Point3D center() const;
 
-    void translate(double dx, double dy);
-    void scale(double sx, double sy);
+    void translate(double dx, double dy, double dz);
+    void scale(double sx, double sy, double sz);
     void rotate_origin(double angle);
     void rotate_pin(double angle, Point3D pin);
     void rotate_center(double angle);

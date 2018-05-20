@@ -34,12 +34,16 @@ public:
         return _bottom_left;
     }
 
-    int width() const {
+    double width() const {
         return (_top_right - _bottom_left).x();
     }
 
-    int height() const {
+    double height() const {
         return (_top_right - _bottom_left).y();
+    }
+
+    double depth() const {
+        return (_top_right - _bottom_left).z();
     }
 
     double angle() const {
@@ -48,11 +52,16 @@ public:
 
     void move(double dx, double dy);
     void zoom(double step);
-    void set_width(int width);
-    void set_height(int height);
+    void set_width(double width);
+    void set_height(double height);
     void rotate(double da);
+    void rotate_x(double da);
+    void rotate_y(double da);
+    void rotate_z(double da);
 
-    void resize(int width, int height) {
+    Point3D vrp();
+    
+    void resize(double width, double height) {
         set_width(width);
         set_height(height);
     }
@@ -60,6 +69,7 @@ public:
     void resize(geometry::Size size) {
         resize(size.width, size.height);
     }
+
 
   private:
     Point3D _top_right;

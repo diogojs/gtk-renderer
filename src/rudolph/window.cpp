@@ -146,7 +146,7 @@ void MainWindow::execute(const std::string& cmd) {
 
         for (auto& obj: renderer.display_file()) {
             if (obj.name() == args[0]) {
-                obj.translate(atoi(args[1].c_str()), atoi(args[2].c_str()));
+                obj.translate(atoi(args[1].c_str()), atoi(args[2].c_str()), atoi(args[3].c_str()));
             }
         }
     } else if (command == "scale") {
@@ -154,7 +154,7 @@ void MainWindow::execute(const std::string& cmd) {
 
         for (auto& obj: renderer.display_file()) {
             if (obj.name() == args[0]) {
-                obj.scale(atoi(args[1].c_str()), atoi(args[1].c_str()));
+                obj.scale(atoi(args[1].c_str()), atoi(args[1].c_str()), atoi(args[1].c_str()));
             }
         }
     } else if (command == "rotate") {
@@ -260,7 +260,7 @@ void MainWindow::setup()
         link_signal(event);
     }
 
-    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_cmdline")), "translate polygon1 30 0");
+    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_cmdline")), "translate object0 30 0 0");
 }
 
 void MainWindow::show() {
@@ -297,21 +297,29 @@ void MainWindow::show() {
     renderer.add_object(BezierCurve(points));
 
     auto xpoints = std::vector<Point3D>{
-        Point3D{150, 150},
-        Point3D{175, 175},
-        Point3D{160, 200},
-        Point3D{140, 200},
-        Point3D{125, 175}
+        Point3D{200, 0, 0},
+        Point3D{300, 0, 0},
+        Point3D{300, 100, 0},
+        Point3D{200, 100, 0},
+        Point3D{200, 0, -100},
+        Point3D{300, 0, -100},
+        Point3D{300, 100, -100},
+        Point3D{200, 100, -100}
     };
 
     auto xedges = std::vector<Edge> {
         std::make_pair(0, 1),
         std::make_pair(1, 2),
         std::make_pair(2, 3),
-        std::make_pair(3, 4),
+        std::make_pair(3, 0),
         std::make_pair(4, 0),
-        std::make_pair(2, 0),
-        std::make_pair(3, 0)
+        std::make_pair(1, 5),
+        std::make_pair(2, 6),
+        std::make_pair(3, 7),
+        std::make_pair(4, 5),
+        std::make_pair(5, 6),
+        std::make_pair(6, 7),
+        std::make_pair(4, 7)
     };
 
     auto xfaces = std::vector<Face> {

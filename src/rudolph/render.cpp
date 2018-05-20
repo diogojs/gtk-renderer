@@ -1,9 +1,8 @@
 #include "render.h"
 
-#include "geometry.h"
 #include "objects/shapes.h"
-#include "matrix.h"
 #include "clipper.h"
+#include "vector3.h"
 
 #include <utility>
 #include <iostream>
@@ -152,14 +151,14 @@ void Renderer::clear()
 }
 
 RenderTarget::RenderTarget():
-    camera_window{Size{520, 520}},
+    camera_window{Point3D{0, 0, 300}, Point3D{520, 520, 0}},
     viewport{Size{520, 520}},
+    transform{calc_transform()},
     back_buffer_{
         cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
                                    viewport.width()+20,
                                    viewport.height()+20) }
 {}
-
 
 RenderTarget::~RenderTarget() {
     cairo_surface_destroy(surface());
@@ -223,6 +222,64 @@ Point3D RenderTarget::world_to_viewport(double xw, double yw) {
 
 Point3D RenderTarget::world_to_viewport(Point3D p) {
     return world_to_viewport(p.x(), p.y());
+}
+
+Point3D RenderTarget::world_to_2d(Point3D p) {
+    Matrix<double> coord{p.x(), p.y(), p.z(), 1};
+    coord = coord * transform;
+
+    auto transformed_p = Point3D{coord(0, 0), coord(0, 1), coord(0, 2)};
+    return (world_to_normal(transformed_p));
+}
+
+Matrix<double> RenderTarget::calc_transform() {
+    auto vrp = Vector3( camera_window.vrp() );
+    //std::cout << "vrp: " << vrp.x() << " " << vrp.y() << " " << vrp.z() << std::endl;
+    Matrix<double> trans(
+        {
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        -vrp.x(), -vrp.y(), -vrp.z(), 1
+        },
+        4, 4
+    );
+    //trans.to_string("trans:");
+
+    auto u = Vector3(camera_window.width(), 0, camera_window.depth());
+    auto v = Vector3(0, camera_window.height(), camera_window.depth());
+    auto normal = u.cross(v);
+
+    // Rotate in x
+    auto tx = normal.angle_x();
+    //std::cout << "angle_x: " << tx << std::endl;
+    Matrix<double> rotx(
+        {
+        1, 0, 0, 0,
+        0, cos(tx), sin(tx), 0,
+        0, -sin(tx), cos(tx), 0,
+        0, 0, 0, 1
+        },
+        4, 4
+    );
+    //rotx.to_string("rotx:");
+
+    auto ty = normal.angle_y();
+    //std::cout << "angle_y: " << ty << std::endl;
+    Matrix<double> roty(
+        {
+        cos(ty), 0, -sin(ty), 0,
+        0, 1, 0, 0,
+        sin(ty), 0, cos(ty), 0,
+        0, 0, 0, 1
+        },
+        4, 4
+    );
+    //roty.to_string("roty:");
+
+    auto _transform = trans * rotx * roty;
+    //_transform.to_string("_transform:");
+    return _transform;
 }
 
 void RenderTarget::clear() {
@@ -357,10 +414,12 @@ void RenderTarget::draw_viewport() {
 
 void RenderTarget::move_camera(double dx, double dy) {
     camera_window.move(dx * _step, dy * _step);
+    transform = calc_transform();
 }
 
 void RenderTarget::zoom(double ratio) {
     camera_window.zoom(ratio);
+    calc_transform();
 }
 
 void Renderer::invalidate() {

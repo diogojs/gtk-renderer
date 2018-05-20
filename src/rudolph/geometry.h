@@ -18,7 +18,6 @@ struct Size {
     {}
 };
 
-
 struct Point3D {
     Matrix<double> data;
     
@@ -60,6 +59,7 @@ struct Point3D {
 
     void translate(double dx, double dy, double dz = 0);
     void scale(double sx, double sy, double sz = 1);
+    //void rotate(Eixo axis, double angle);
     void rotate_x(double angle);
     void rotate_y(double angle);
     void rotate_z(double angle);
@@ -74,6 +74,7 @@ Point3D operator*(int value, const Point3D& p);
 Point3D operator*(double value, const Point3D& p);
 
 typedef std::pair<unsigned, unsigned> Edge;
+//typedef int[] Eixo;
 
 struct Face {
     Face(unsigned a, unsigned b, unsigned c):

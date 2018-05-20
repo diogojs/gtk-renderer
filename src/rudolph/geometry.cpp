@@ -82,6 +82,7 @@ void Point3D::rotate_z(double angle) {
 Point3D& Point3D::operator+=(const Point3D& p) {
     x() += p.x();
     y() += p.y();
+    z() += p.z();
     return *this;
 }
 
@@ -90,15 +91,15 @@ Point3D& Point3D::operator-=(const Point3D& p) {
 }
 
 bool Point3D::operator==(const Point3D& p) {
-    return ( (x() == p.x()) && (y() == p.y()) );
+    return ( (x() == p.x()) && (y() == p.y()) && (z() == p.z()) );
 }
 
 Point3D geometry::operator-(const Point3D& p) {
-    return Point3D{-p.x(), -p.y()};
+    return Point3D{-p.x(), -p.y(), -p.z()};
 }
 
 Point3D geometry::operator+(const Point3D& lhs, const Point3D& rhs) {
-    return Point3D{rhs.x() + lhs.x(), rhs.y() + lhs.y()};
+    return Point3D{rhs.x() + lhs.x(), rhs.y() + lhs.y(), rhs.z() + lhs.z()};
 }
 
 Point3D geometry::operator-(const Point3D& lhs, const Point3D& rhs) {
@@ -106,19 +107,19 @@ Point3D geometry::operator-(const Point3D& lhs, const Point3D& rhs) {
 }
 
 Point3D geometry::operator*(const Point3D& p, int value) {
-    return Point3D{p.x() * value, p.y() * value};
+    return Point3D{p.x() * value, p.y() * value, p.z() * value};
 }
 
 Point3D geometry::operator*(const Point3D& p, double value) {
-    return Point3D{p.x() * value, p.y() * value};
+    return Point3D{p.x() * value, p.y() * value, p.z() * value};
 }
 
 Point3D geometry::operator*(int value, const Point3D& p) {
-    return Point3D{p.x() * value, p.y() * value};
+    return Point3D{p.x() * value, p.y() * value, p.z() * value};
 }
 
 Point3D geometry::operator*(double value, const Point3D& p) {
-    return Point3D{p.x() * value, p.y() * value};
+    return Point3D{p.x() * value, p.y() * value, p.z() * value};
 }
 
 }

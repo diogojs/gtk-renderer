@@ -8,6 +8,7 @@
 
 #include "geometry.h"
 #include "drawable.h"
+#include "matrix.h"
 #include "objects/camerawindow.h"
 #include "objects/viewport.h"
 #include "../utils.h"
@@ -17,7 +18,8 @@ namespace rudolph {
 /**
  * Drawable canvas.
  *
- * Abstracts the idea of an output drawing target.
+ * Abstracts the idea of an output drawing target
+ * and applies window/viewport transformations.
  */
 class RenderTarget {
     using Point3D = geometry::Point3D;
@@ -32,6 +34,8 @@ public:
     Point3D normal_to_viewport(Point3D p);
     Point3D world_to_viewport(double xw, double yw);
     Point3D world_to_viewport(Point3D p);
+    Point3D world_to_2d(Point3D p);
+    Matrix<double> calc_transform();
 
     void clear();
     void draw_point(Point3D);
@@ -70,12 +74,13 @@ public:
 private:
     CameraWindow camera_window;
     Viewport viewport;
+    Matrix<double> transform;
     cairo_surface_t* back_buffer_ = nullptr;
     double _step = 10;
 };
 
 /**
- * Manages drawable components and applies window/viewport transformations.
+ * Manages drawable components.
  */
 class Renderer {
     using Size = geometry::Size;

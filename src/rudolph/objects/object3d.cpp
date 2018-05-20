@@ -10,7 +10,7 @@ unsigned int Object3D::objects_id = 0;
 void Object3D::draw(RenderTarget& target) {
     if (!scn_valid) {
         for (auto i = 0u; i < scn_points.size(); ++i) {
-            scn_points[i] = target.world_to_normal(_points[i]);
+            scn_points[i] = target.world_to_2d(_points[i]);
         }
         scn_valid = true;
     }
@@ -26,26 +26,27 @@ Point3D Object3D::center() const {
     }
     point.x() = point.x()/_points.size();
     point.y() = point.y()/_points.size();
+    point.z() = point.z()/_points.size();
     return point;
 }
 
-void Object3D::translate(double dx, double dy) {
+void Object3D::translate(double dx, double dy, double dz) {
     for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].translate(dx, dy);
+        _points[i].translate(dx, dy, dz);
     }
     scn_valid = false;
 }
 
-void Object3D::scale(double sx, double sy) {
+void Object3D::scale(double sx, double sy, double sz) {
     auto center = this->center();
     for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].translate(-center.x(), -center.y());
+        _points[i].translate(-center.x(), -center.y(), -center.z());
     }
     for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].scale(sx, sy);
+        _points[i].scale(sx, sy, sz);
     }
     for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].translate(center.x(), center.y());
+        _points[i].translate(center.x(), center.y(), center.z());
     }
     scn_valid = false;
 }
@@ -59,13 +60,13 @@ void Object3D::rotate_origin(double angle) {
 
 void Object3D::rotate_pin(double angle, Point3D pin) {
 	for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].translate(-pin.x(), -pin.y());
+        _points[i].translate(-pin.x(), -pin.y(), -pin.z());
     }
     for (auto i = 0u; i < _points.size(); ++i) {
         _points[i].rotate_z(angle);
     }
     for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].translate(pin.x(), pin.y());
+        _points[i].translate(pin.x(), pin.y(), pin.z());
     }
     scn_valid = false;
 }

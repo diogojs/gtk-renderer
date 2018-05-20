@@ -38,12 +38,12 @@ public:
         data->center();
     }
 
-    void translate(int dx, int dy) {
-        data->translate(dx, dy);
+    void translate(double dx, double dy, double dz) {
+        data->translate(dx, dy, dz);
     }
 
-    void scale(int sx, int sy) {
-        data->scale(sx, sy);
+    void scale(double sx, double sy, double sz) {
+        data->scale(sx, sy, sz);
     }
 
     void rotate_origin(double angle) {
@@ -68,8 +68,8 @@ private:
         virtual void draw(RenderTarget&) = 0;
         virtual std::string name() const = 0;
         virtual Point3D center() const = 0;
-        virtual void translate(int dx, int dy) = 0;
-        virtual void scale(int sx, int sy) = 0;
+        virtual void translate(double dx, double dy, double dz) = 0;
+        virtual void scale(double sx, double sy, double sz) = 0;
         virtual void rotate_origin(double angle) = 0;
         virtual void rotate_pin(double angle, Point3D pin) = 0;
         virtual void rotate_center(double angle) = 0;
@@ -97,12 +97,12 @@ private:
             return x.center();
         }
 
-        void translate(int dx, int dy) override {
-            x.translate(dx, dy);
+        void translate(double dx, double dy, double dz) override {
+            x.translate(dx, dy, dz);
         }
 
-        void scale(int sx, int sy) override {
-            x.scale(sx, sy);
+        void scale(double sx, double sy, double sz) override {
+            x.scale(sx, sy, sz);
         }
 
         void rotate_origin(double angle) {
