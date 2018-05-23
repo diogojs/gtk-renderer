@@ -2,7 +2,6 @@
 
 #include "objects/shapes.h"
 #include "clipper.h"
-#include "vector3.h"
 
 #include <utility>
 #include <iostream>
@@ -79,16 +78,16 @@ namespace {
         auto& target = renderer->render_target();
         switch (event->keyval) {
             case GDK_KEY_Up:
-                target.move_camera(0, -1);
+                target.move_camera(0, -1, 0);
                 break;
             case GDK_KEY_Down:
-                target.move_camera(0, 1);
+                target.move_camera(0, 1, 0);
                 break;
             case GDK_KEY_Left:
-                target.move_camera(1, 0);
+                target.move_camera(1, 0, 0);
                 break;
             case GDK_KEY_Right:
-                target.move_camera(-1, 0);
+                target.move_camera(-1, 0, 0);
                 break;
             case GDK_KEY_Page_Up:
                 target.zoom(0.1);
@@ -119,6 +118,9 @@ namespace {
         return Size{(double)parent_size.width, (double)parent_size.height};
     }
 }
+
+int RenderTarget::counter = 0;
+bool RenderTarget::log = false;
 
 Renderer::Renderer(GtkWidget* parent):
     parent{parent},
@@ -151,7 +153,7 @@ void Renderer::clear()
 }
 
 RenderTarget::RenderTarget():
-    camera_window{Point3D{0, 0, 300}, Point3D{520, 520, 0}},
+    camera_window{Point3D{0, 0, 0}, Point3D{520, 520, 0}},
     viewport{Size{520, 520}},
     transform{calc_transform()},
     back_buffer_{
@@ -166,6 +168,8 @@ RenderTarget::~RenderTarget() {
 
 Point3D RenderTarget::world_to_normal(double xw, double yw) {
     Matrix<double> coord{xw, yw, 1};
+    if (RenderTarget::log)
+        std::cout << "xw: " << xw << " yw: " << yw << std::endl;
     
     double cos_vy = std::cos(camera_window.angle());
     double sin_vy = std::sin(camera_window.angle());
@@ -173,6 +177,11 @@ Point3D RenderTarget::world_to_normal(double xw, double yw) {
     double cam_y = camera_window.bottom_left().y();
     double cam_width = camera_window.width();
     double cam_height = camera_window.height();
+
+    if (RenderTarget::log) {
+        camera_window.bottom_left().to_string("cam_xy");
+        std::cout << "cam_width,height: " << cam_width << " , " << cam_height << std::endl;
+    }
 
     // Normalized Coordinates
     // Translate to origin, rotate, and scale
@@ -183,10 +192,16 @@ Point3D RenderTarget::world_to_normal(double xw, double yw) {
         },
         3, 3
     );
+    if (RenderTarget::log)
+        normalizer.to_string("normalizer");
     
     coord = coord * normalizer;
 
-    return Point3D{coord(0, 0), coord(0, 1)};
+    auto result = Point3D{coord(0, 0), coord(0, 1)};
+    if (RenderTarget::log)
+        result.to_string("result in");
+
+    return result;
 }
 
 Point3D RenderTarget::world_to_normal(Point3D p) {
@@ -225,16 +240,32 @@ Point3D RenderTarget::world_to_viewport(Point3D p) {
 }
 
 Point3D RenderTarget::world_to_2d(Point3D p) {
+    RenderTarget::counter++;
+    //if (RenderTarget::counter % 201 == 0 || RenderTarget::counter % 202 == 0)
+    //    RenderTarget::log = true;
+
     Matrix<double> coord{p.x(), p.y(), p.z(), 1};
+    if (RenderTarget::log)
+        p.to_string("p");
     coord = coord * transform;
 
     auto transformed_p = Point3D{coord(0, 0), coord(0, 1), coord(0, 2)};
-    return (world_to_normal(transformed_p));
+    if (RenderTarget::log)
+        transformed_p.to_string("transformed_p");
+
+    auto result = world_to_normal(transformed_p);
+    if (RenderTarget::log)
+        result.to_string("result final");
+
+    RenderTarget::log = false;
+
+    return result;
 }
 
 Matrix<double> RenderTarget::calc_transform() {
-    auto vrp = Vector3( camera_window.vrp() );
+    auto vrp = camera_window.vrp();
     //std::cout << "vrp: " << vrp.x() << " " << vrp.y() << " " << vrp.z() << std::endl;
+
     Matrix<double> trans(
         {
         1, 0, 0, 0,
@@ -246,9 +277,12 @@ Matrix<double> RenderTarget::calc_transform() {
     );
     //trans.to_string("trans:");
 
-    auto u = Vector3(camera_window.width(), 0, camera_window.depth());
-    auto v = Vector3(0, camera_window.height(), camera_window.depth());
-    auto normal = u.cross(v);
+    auto u = camera_window.bottom_right() - camera_window.bottom_left();
+    //u.to_string("u");
+    auto v = camera_window.top_left() - camera_window.bottom_left();
+    //v.to_string("v");
+    auto normal = u.cross(v).unit();
+    //normal.to_string("normal");
 
     // Rotate in x
     auto tx = normal.angle_x();
@@ -310,6 +344,7 @@ void RenderTarget::draw_point(Point3D p) {
 }
 
 void RenderTarget::draw_line(Point3D a, Point3D b) {
+
     auto clipper = Clipper(ClipMethod::LIANG_BARSKY);
 
     std::vector<Point3D> clipped = clipper.clip_line(a, b);
@@ -412,8 +447,15 @@ void RenderTarget::draw_viewport() {
     cairo_destroy(cr);
 }
 
-void RenderTarget::move_camera(double dx, double dy) {
-    camera_window.move(dx * _step, dy * _step);
+void RenderTarget::move_camera(double dx, double dy, double dz) {
+    camera_window.move(dx * _step, dy * _step, dz * _step);
+    transform = calc_transform();
+}
+
+void RenderTarget::rotate_camera(double ax, double ay, double az) {
+    camera_window.rotate_x(ax);
+    camera_window.rotate_y(ay);
+    camera_window.rotate_z(az);
     transform = calc_transform();
 }
 

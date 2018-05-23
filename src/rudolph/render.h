@@ -43,7 +43,8 @@ public:
     void draw_polygon(std::vector<Point3D> points, bool filled);
     void draw_curve(std::vector<Point3D> points);
     void draw_viewport();
-    void move_camera(double dx, double dy);
+    void move_camera(double dx, double dy, double dz);
+    void rotate_camera(double ax, double ay, double az);
 
     CameraWindow& window() {
         return camera_window;
@@ -77,6 +78,8 @@ private:
     Matrix<double> transform;
     cairo_surface_t* back_buffer_ = nullptr;
     double _step = 10;
+    static int counter;
+    static bool log;
 };
 
 /**

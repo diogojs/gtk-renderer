@@ -2,6 +2,7 @@
 #define RUDOLPH_GEOMETRY_H
 
 #include <memory>
+#include <cmath>
 
 #include "matrix.h"
 
@@ -51,6 +52,41 @@ struct Point3D {
 
     const double& z() const {
         return data(0, 2);
+    }
+
+    Point3D cross(const Point3D& v) {
+        Point3D result {
+            (y()*v.z() - z()*v.y()), // i
+            (z()*v.x() - x()*v.z()), // j
+            (x()*v.y() - y()*v.x()) // k
+        };
+        return result;
+    }
+
+    double modulo() {
+        return sqrt(x()*x() + y()*y() + z()*z());
+    }
+
+    Point3D unit() {
+        auto n = modulo();
+        Point3D unitary {
+            x()/n,
+            y()/n,
+            z()/n
+        };
+        return unitary;
+    }
+
+    double angle_x() {
+        return atan(y()/z());
+    }
+
+    double angle_y() {
+        return atan(x()/z());
+    }
+
+    void to_string(std::string title = " ") {
+        std::cout << title << ": " << x() << " " << y() << " " << z() << std::endl;
     }
 
     Point3D& operator+=(const Point3D& p);

@@ -3,11 +3,13 @@
 namespace rudolph {
 using Point3D = geometry::Point3D;
 
-void CameraWindow::move(double dx, double dy) {
-    auto d = Point3D{dx, dy};
+void CameraWindow::move(double dx, double dy, double dz) {
+    auto d = Point3D{dx, dy, dz};
 
     _bottom_left += d;
     _top_right += d;
+    _top_left += d;
+    _bottom_right += d;
 }
 
 void CameraWindow::zoom(double step) {
@@ -23,16 +25,22 @@ void CameraWindow::rotate(double da) {
 void CameraWindow::rotate_x(double da) {
     _top_right.rotate_x(da);
     _bottom_left.rotate_x(da);
+    _top_left.rotate_x(da);
+    _bottom_right.rotate_x(da);
 }
 
 void CameraWindow::rotate_y(double da) {
     _top_right.rotate_y(da);
     _bottom_left.rotate_y(da);
+    _top_left.rotate_y(da);
+    _bottom_right.rotate_y(da);
 }
 
 void CameraWindow::rotate_z(double da) {
     _top_right.rotate_z(da);
     _bottom_left.rotate_z(da);
+    _top_left.rotate_z(da);
+    _bottom_right.rotate_z(da);
 }
 
 void CameraWindow::set_width(double width) {

@@ -165,6 +165,8 @@ void MainWindow::execute(const std::string& cmd) {
                 obj.rotate_center(atoi(args[1].c_str()));
             }
         }
+    } else if (command == "rotatecam") {
+        renderer.render_target().rotate_camera(atoi(args[0].c_str()), atoi(args[1].c_str()), atoi(args[2].c_str()));
     }
 }
 
@@ -176,25 +178,25 @@ void MainWindow::setup()
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(0, 1);
+                rt.move_camera(0, 1, 0);
             }, &renderer},
         {"btn_down", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(0, -1);
+                rt.move_camera(0, -1, 0);
             }, &renderer},
         {"btn_left", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(-1, 0);
+                rt.move_camera(-1, 0, 0);
             }, &renderer},
         {"btn_right", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(1, 0);
+                rt.move_camera(1, 0, 0);
             }, &renderer},
         {"btn_in", "clicked",
             [](GtkWidget* w, gpointer* data) {
@@ -266,6 +268,7 @@ void MainWindow::setup()
 void MainWindow::show() {
     gtk_widget_show_all(gtk_window);
 
+    // 2D
     renderer.add_object(Point{100, 100});
     renderer.add_object(Line{0, 0, 10, 0});
     renderer.add_object(Line{0, 0, 0, 10});
@@ -296,6 +299,7 @@ void MainWindow::show() {
     };
     renderer.add_object(BezierCurve(points));
 
+    // Objects 3D
     auto xpoints = std::vector<Point3D>{
         Point3D{200, 0, 0},
         Point3D{300, 0, 0},
@@ -306,7 +310,6 @@ void MainWindow::show() {
         Point3D{300, 100, -100},
         Point3D{200, 100, -100}
     };
-
     auto xedges = std::vector<Edge> {
         std::make_pair(0, 1),
         std::make_pair(1, 2),
@@ -321,7 +324,6 @@ void MainWindow::show() {
         std::make_pair(6, 7),
         std::make_pair(4, 7)
     };
-
     auto xfaces = std::vector<Face> {
         Face( 0, 1, 2 ),
         Face( 0, 2, 3 ),
@@ -329,6 +331,20 @@ void MainWindow::show() {
     };
 
     renderer.add_object(Object3D(xpoints, xedges, xfaces));
+
+    // origin axis
+    xpoints.clear();
+    xpoints.push_back(Point3D{0, 0, 0});
+    xpoints.push_back(Point3D{500, 0, 0});
+    xpoints.push_back(Point3D{0, 500, 0});
+    xpoints.push_back(Point3D{0, 0, -500});
+
+    xedges.clear();
+    xedges.push_back(std::make_pair(0, 1));
+    xedges.push_back(std::make_pair(0, 2));
+    xedges.push_back(std::make_pair(0, 3));
+
+    renderer.add_object(Object3D(xpoints, xedges, std::vector<Face>()));
 
     update_list();
 }
