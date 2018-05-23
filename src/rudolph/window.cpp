@@ -240,8 +240,10 @@ void MainWindow::setup()
             }, &renderer},
         {"btn_del", "clicked",
             [](GtkWidget* w, gpointer* data) {
-                std::cout << "btn del\n";
-            }, &renderer},
+                auto& window = *reinterpret_cast<MainWindow*>(data);
+                auto& r = window.renderer;
+                r.del_object();
+            }, this},
         {"btn_update_window", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& window = *reinterpret_cast<MainWindow*>(data);
@@ -269,9 +271,10 @@ void MainWindow::show() {
     gtk_widget_show_all(gtk_window);
 
     // 2D
-    renderer.add_object(Point{100, 100});
+    //renderer.add_object(Point{100, 100});
     renderer.add_object(Line{0, 0, 10, 0});
     renderer.add_object(Line{0, 0, 0, 10});
+    /*
     auto points = std::vector<Point3D>{
         Point3D{150-200, 150},
         Point3D{175-200, 175},
@@ -345,6 +348,8 @@ void MainWindow::show() {
     xedges.push_back(std::make_pair(0, 3));
 
     renderer.add_object(Object3D(xpoints, xedges, std::vector<Face>()));
+    */
+    renderer.load_obj("objs/subzero.obj");
 
     update_list();
 }

@@ -3,6 +3,9 @@
 #include "objects/shapes.h"
 #include "clipper.h"
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "utils/tiny_obj_loader.h"
+
 #include <utility>
 #include <iostream>
 #include <cmath>
@@ -153,7 +156,7 @@ void Renderer::clear()
 }
 
 RenderTarget::RenderTarget():
-    camera_window{Point3D{0, 0, 0}, Point3D{520, 520, 0}},
+    camera_window{Point3D{-2, -2, 0}, Point3D{5, 5, 0}},
     viewport{Size{520, 520}},
     transform{calc_transform()},
     back_buffer_{
@@ -478,4 +481,59 @@ void Renderer::invalidate(Rect region) {
             region.width + 2,
             region.height + 2
     );
+}
+
+void Renderer::load_obj(std::string filename) {
+    using Edge = geometry::Edge;
+    using Face = geometry::Face;
+
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes_tiny;
+    std::vector<tinyobj::material_t> materials;
+
+    std::string err;
+    bool ret = tinyobj::LoadObj(&attrib, &shapes_tiny, &materials, &err, filename.c_str());
+
+    if (!err.empty()) {
+        std::cerr << err << std::endl;
+    }
+
+    if (!ret) {
+        return;
+    }
+
+    std::vector<Point3D> points;
+    std::vector<Edge> edges;
+    std::vector<Face> faces;
+
+    // loop over shapes
+    for (auto shape: shapes_tiny) {
+        // loop over faces
+        size_t idx_offset = 0;
+        for (size_t fid = 0u; fid < shape.mesh.num_face_vertices.size(); fid++) {
+            int fv = shape.mesh.num_face_vertices[fid];
+
+            // loop over vertices in the face
+            for (size_t v = 0; v < fv; v++) {
+                int idx = shape.mesh.indices[idx_offset+v].vertex_index;
+                auto vx = attrib.vertices[3*idx+0];
+                auto vy = attrib.vertices[3*idx+1];
+                auto vz = attrib.vertices[3*idx+2];
+
+                points.push_back(Point3D(vx, vy, vz));
+            }
+            // link all vertices in edges
+            for (size_t v = 0; v < fv-1; v++) {
+                int idx1 = shape.mesh.indices[idx_offset+v].vertex_index;
+                int idx2 = shape.mesh.indices[idx_offset+v+1].vertex_index;
+                edges.push_back( std::make_pair(idx1, idx2) );
+            }
+            int idx1 = shape.mesh.indices[idx_offset+fv-1].vertex_index;
+            int idx2 = shape.mesh.indices[idx_offset].vertex_index;
+            edges.push_back( std::make_pair(idx1, idx2) );
+
+            idx_offset += fv;
+        }
+        add_object(objects::Object3D(points, edges, faces, shape.name));
+    }
 }

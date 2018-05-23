@@ -11,6 +11,7 @@
 #include "matrix.h"
 #include "objects/camerawindow.h"
 #include "objects/viewport.h"
+#include "objects/object3d.h"
 #include "../utils.h"
 
 namespace rudolph {
@@ -100,10 +101,16 @@ public:
     void clear();
     void invalidate();
     void invalidate(Rect);
+    void load_obj(std::string filename);
 
     template <typename T>
     void add_object(T x) {
         _display_file.push_back(Drawable(std::move(x)));
+    }
+
+    void del_object() {
+        if (!_display_file.empty())
+            _display_file.pop_back();
     }
 
     std::vector<Drawable> display_file() const {

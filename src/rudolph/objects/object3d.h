@@ -14,7 +14,7 @@ using Face = geometry::Face;
 
 class Object3D {
 public:
-    Object3D(std::vector<Point3D> points, std::vector<Edge> edges, std::vector<Face> faces):
+    Object3D(std::vector<Point3D> points, std::vector<Edge> edges, std::vector<Face> faces, std::string name = " "):
         _points{std::move(points)},
         _edges{std::move(edges)},
         _faces{std::move(faces)},
@@ -22,7 +22,10 @@ public:
         scn_valid{false},
         _id{objects_id++},
         _name{"object" + std::to_string(_id)}
-    {}
+    {
+        if (name != " ")
+            _name = name;
+    }
 
     void draw(RenderTarget&);
 
