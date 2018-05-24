@@ -349,7 +349,7 @@ void MainWindow::show() {
 
     renderer.add_object(Object3D(xpoints, xedges, std::vector<Face>()));
     */
-    renderer.load_obj("cubinho.obj");
+    renderer.load_obj("cristo.obj");
 
     update_list();
 }

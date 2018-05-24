@@ -156,7 +156,7 @@ void Renderer::clear()
 }
 
 RenderTarget::RenderTarget():
-    camera_window{Point3D{-2, -2, 0}, Point3D{5, 5, 0}},
+    camera_window{Point3D{-5, -5, 0}, Point3D{10, 10, 0}},
     viewport{Size{520, 520}},
     transform{calc_transform()},
     back_buffer_{
@@ -506,6 +506,15 @@ void Renderer::load_obj(std::string filename) {
     std::vector<Edge> edges;
     std::vector<Face> faces;
 
+    // loop over vertices
+    for (auto v = 0u; v < attrib.vertices.size(); v+=3) {
+        auto vx = attrib.vertices[v];
+        auto vy = attrib.vertices[v+1];
+        auto vz = attrib.vertices[v+2];
+
+        points.push_back(Point3D(vx, vy, vz));
+    }
+
     // loop over shapes
     for (auto shape: shapes_tiny) {
         // loop over faces
@@ -513,15 +522,6 @@ void Renderer::load_obj(std::string filename) {
         for (size_t fid = 0u; fid < shape.mesh.num_face_vertices.size(); fid++) {
             int fv = shape.mesh.num_face_vertices[fid];
 
-            // loop over vertices in the face
-            for (size_t v = 0; v < fv; v++) {
-                int idx = shape.mesh.indices[idx_offset+v].vertex_index;
-                auto vx = attrib.vertices[3*idx+0];
-                auto vy = attrib.vertices[3*idx+1];
-                auto vz = attrib.vertices[3*idx+2];
-
-                points.push_back(Point3D(vx, vy, vz));
-            }
             // link all vertices in edges
             for (size_t v = 0; v < fv-1; v++) {
                 int idx1 = shape.mesh.indices[idx_offset+v].vertex_index;
