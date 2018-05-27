@@ -8,8 +8,10 @@
 
 #include "geometry.h"
 #include "drawable.h"
+#include "matrix.h"
 #include "objects/camerawindow.h"
 #include "objects/viewport.h"
+#include "objects/object3d.h"
 #include "../utils.h"
 
 namespace rudolph {
@@ -17,29 +19,33 @@ namespace rudolph {
 /**
  * Drawable canvas.
  *
- * Abstracts the idea of an output drawing target.
+ * Abstracts the idea of an output drawing target
+ * and applies window/viewport transformations.
  */
 class RenderTarget {
-    using Point2D = geometry::Point2D;
+    using Point3D = geometry::Point3D;
     using Size = geometry::Size;
 public:
     RenderTarget();
     ~RenderTarget();
 
-    Point2D world_to_normal(double xw, double yw);
-    Point2D world_to_normal(Point2D p);
-    Point2D normal_to_viewport(double xw, double yw);
-    Point2D normal_to_viewport(Point2D p);
-    Point2D world_to_viewport(double xw, double yw);
-    Point2D world_to_viewport(Point2D p);
+    Point3D world_to_normal(double xw, double yw);
+    Point3D world_to_normal(Point3D p);
+    Point3D normal_to_viewport(double xw, double yw);
+    Point3D normal_to_viewport(Point3D p);
+    Point3D world_to_viewport(double xw, double yw);
+    Point3D world_to_viewport(Point3D p);
+    Point3D world_to_2d(Point3D p);
+    Matrix<double> calc_transform();
 
     void clear();
-    void draw_point(Point2D);
-    void draw_line(Point2D, Point2D);
-    void draw_polygon(std::vector<Point2D> points, bool filled);
-    void draw_curve(std::vector<Point2D> points);
+    void draw_point(Point3D);
+    void draw_line(Point3D, Point3D);
+    void draw_polygon(std::vector<Point3D> points, bool filled);
+    void draw_curve(std::vector<Point3D> points);
     void draw_viewport();
-    void move_camera(double dx, double dy);
+    void move_camera(double dx, double dy, double dz);
+    void rotate_camera(double ax, double ay, double az);
 
     CameraWindow& window() {
         return camera_window;
@@ -70,12 +76,15 @@ public:
 private:
     CameraWindow camera_window;
     Viewport viewport;
+    Matrix<double> transform;
     cairo_surface_t* back_buffer_ = nullptr;
-    double _step = 10;
+    double _step = 1;
+    static int counter;
+    static bool log;
 };
 
 /**
- * Manages drawable components and applies window/viewport transformations.
+ * Manages drawable components.
  */
 class Renderer {
     using Size = geometry::Size;
@@ -92,10 +101,16 @@ public:
     void clear();
     void invalidate();
     void invalidate(Rect);
+    void load_obj(std::string filename);
 
     template <typename T>
     void add_object(T x) {
         _display_file.push_back(Drawable(std::move(x)));
+    }
+
+    void del_object() {
+        if (!_display_file.empty())
+            _display_file.pop_back();
     }
 
     std::vector<Drawable> display_file() const {

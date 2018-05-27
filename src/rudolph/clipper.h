@@ -20,35 +20,35 @@ enum class ClipMethod {
 };
 
 class Clipper {
-    using Point2D = geometry::Point2D;
+    using Point3D = geometry::Point3D;
 public:
     Clipper(ClipMethod method = ClipMethod::LIANG_BARSKY):
         _method{method}
     {}
 
     // Return false if point was not clipped (visible), true if clipped (hidden)
-    bool clip_point(Point2D a);
-    std::vector<Point2D> clip_line(Point2D a, Point2D b);
-    std::vector<Point2D> clip_polygon(std::vector<Point2D>& points);
-    std::vector<Point2D> clip_curve(std::vector<Point2D>& points);
+    bool clip_point(Point3D a);
+    std::vector<Point3D> clip_line(Point3D a, Point3D b);
+    std::vector<Point3D> clip_polygon(std::vector<Point3D>& points);
+    std::vector<Point3D> clip_curve(std::vector<Point3D>& points);
 
 private:
     ClipMethod _method;
-    int region_code(Point2D p);
-    std::vector<Point2D> cohen_sutherland(Point2D a, Point2D b);
-    std::vector<Point2D> liang_barsky(Point2D a, Point2D b);
-    void clip_pol_aux(std::vector<Point2D>& new_polygon, Point2D a, Point2D b);
-    Point2D intersection(Point2D e1, Point2D e2, Point2D a, Point2D b);
+    int region_code(Point3D p);
+    std::vector<Point3D> cohen_sutherland(Point3D a, Point3D b);
+    std::vector<Point3D> liang_barsky(Point3D a, Point3D b);
+    void clip_pol_aux(std::vector<Point3D>& new_polygon, Point3D a, Point3D b);
+    Point3D intersection(Point3D e1, Point3D e2, Point3D a, Point3D b);
 
     const double edge_left = -1;
     const double edge_right = 1;
     const double edge_up = -1;
     const double edge_down = 1;
-    std::vector<Point2D> clip_window{
-        Point2D{edge_left, edge_up},
-        Point2D{edge_right, edge_up},
-        Point2D{edge_right, edge_down},
-        Point2D{edge_left, edge_down}
+    std::vector<Point3D> clip_window{
+        Point3D{edge_left, edge_up},
+        Point3D{edge_right, edge_up},
+        Point3D{edge_right, edge_down},
+        Point3D{edge_left, edge_down}
     };
 };
 

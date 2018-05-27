@@ -10,6 +10,7 @@ set(SOURCES
     clipper.cpp
     "objects/shapes.cpp"
     "objects/beziercurve.cpp"
+    "objects/object3d.cpp"
     "objects/camerawindow.cpp"
 )
 

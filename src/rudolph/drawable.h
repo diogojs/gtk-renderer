@@ -11,7 +11,7 @@ namespace rudolph {
 class RenderTarget;
 
 class Drawable {
-    using Point2D = geometry::Point2D;
+    using Point3D = geometry::Point3D;
 public:
     template <typename T>
     Drawable(T t):
@@ -34,28 +34,40 @@ public:
         return data->name();
     }
 
-    Point2D center() const {
+    Point3D center() const {
         data->center();
     }
 
-    void translate(int dx, int dy) {
-        data->translate(dx, dy);
+    void translate(double dx, double dy, double dz) {
+        data->translate(dx, dy, dz);
     }
 
-    void scale(int sx, int sy) {
-        data->scale(sx, sy);
+    void scale(double sx, double sy, double sz) {
+        data->scale(sx, sy, sz);
     }
 
     void rotate_origin(double angle) {
         data->rotate_origin(angle);
     }
 
-    void rotate_pin(double angle, Point2D pin) {
+    void rotate_pin(double angle, Point3D pin) {
         data->rotate_pin(angle, pin);
     }
 
     void rotate_center(double angle) {
         data->rotate_center(angle);
+    }
+
+    void rotate_x(double angle) {
+        data->rotate_x(angle);
+    }
+
+    void rotate_y(double angle) {
+        data->rotate_y(angle);
+    }
+
+    void rotate_z(double angle) {
+        data->rotate_z(angle);
     }
 
 private:
@@ -67,12 +79,15 @@ private:
         virtual std::unique_ptr<Model> copy() const = 0;
         virtual void draw(RenderTarget&) = 0;
         virtual std::string name() const = 0;
-        virtual Point2D center() const = 0;
-        virtual void translate(int dx, int dy) = 0;
-        virtual void scale(int sx, int sy) = 0;
+        virtual Point3D center() const = 0;
+        virtual void translate(double dx, double dy, double dz) = 0;
+        virtual void scale(double sx, double sy, double sz) = 0;
         virtual void rotate_origin(double angle) = 0;
-        virtual void rotate_pin(double angle, Point2D pin) = 0;
+        virtual void rotate_pin(double angle, Point3D pin) = 0;
         virtual void rotate_center(double angle) = 0;
+        virtual void rotate_x(double angle) = 0;
+        virtual void rotate_y(double angle) = 0;
+        virtual void rotate_z(double angle) = 0;
     };
 
     template <typename T>
@@ -93,28 +108,40 @@ private:
             return x.name();
         }
 
-        Point2D center() const override {
+        Point3D center() const override {
             return x.center();
         }
 
-        void translate(int dx, int dy) override {
-            x.translate(dx, dy);
+        void translate(double dx, double dy, double dz) override {
+            x.translate(dx, dy, dz);
         }
 
-        void scale(int sx, int sy) override {
-            x.scale(sx, sy);
+        void scale(double sx, double sy, double sz) override {
+            x.scale(sx, sy, sz);
         }
 
         void rotate_origin(double angle) {
             x.rotate_origin(angle);
         }
 
-        void rotate_pin(double angle, Point2D pin) {
+        void rotate_pin(double angle, Point3D pin) {
             x.rotate_pin(angle, pin);
         }
 
         void rotate_center(double angle) {
             x.rotate_center(angle);
+        }
+
+        void rotate_x(double angle) {
+            x.rotate_x(angle);
+        }
+
+        void rotate_y(double angle) {
+            x.rotate_y(angle);
+        }
+
+        void rotate_z(double angle) {
+            x.rotate_z(angle);
         }
 
         T x;

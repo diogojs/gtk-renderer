@@ -15,4 +15,5 @@ void rudolph::main(int& argc, char**& argv) {
     window.show();
 
     gtk_main();
+    
 }

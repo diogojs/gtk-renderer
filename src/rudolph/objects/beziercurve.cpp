@@ -7,17 +7,16 @@ namespace objects {
 
 unsigned int BezierCurve::bezier_id = 0;
 const Matrix<double> BezierCurve::matrix_b{
-    *(new std::vector<double>
     {
         -1, 3, -3, 1,
         3, -6, 3, 0,
         -3, 3, 0, 0,
         1, 0, 0, 0
-    }),
+    },
     4, 4
 };
 
-BezierCurve::BezierCurve(std::vector<Point2D> points, double step):
+BezierCurve::BezierCurve(std::vector<Point3D> points, double step):
     _input{points},
     _step{step},
     _points{},
@@ -45,53 +44,54 @@ void BezierCurve::draw(RenderTarget& target) {
     target.draw_curve(scn_points);
 }
 
-Point2D BezierCurve::center() const {
+Point3D BezierCurve::center() const {
     auto point = _points[0];
     for (auto i = 1u; i < _points.size(); ++i) {
         point += _points[i];
     }
     point.x() = point.x()/_points.size();
     point.y() = point.y()/_points.size();
+    point.z() = point.z()/_points.size();
     return point;
 }
 
-void BezierCurve::translate(double dx, double dy) {
+void BezierCurve::translate(double dx, double dy, double dz) {
     for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].translate(dx, dy);
+        _points[i].translate(dx, dy, dz);
     }
     scn_valid = false;
 }
 
-void BezierCurve::scale(double sx, double sy) {
+void BezierCurve::scale(double sx, double sy, double sz) {
     auto center = this->center();
     for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].translate(-center.x(), -center.y());
+        _points[i].translate(-center.x(), -center.y(), -center.z());
     }
     for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].scale(sx, sy);
+        _points[i].scale(sx, sy, sz);
     }
     for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].translate(center.x(), center.y());
+        _points[i].translate(center.x(), center.y(), center.z());
     }
     scn_valid = false;
 }
 
 void BezierCurve::rotate_origin(double angle) {
 	for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].rotate(angle);
+        _points[i].rotate_z(angle);
     }
     scn_valid = false;
 }
 
-void BezierCurve::rotate_pin(double angle, Point2D pin) {
+void BezierCurve::rotate_pin(double angle, Point3D pin) {
 	for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].translate(-pin.x(), -pin.y());
+        _points[i].translate(-pin.x(), -pin.y(), -pin.z());
     }
     for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].rotate(angle);
+        _points[i].rotate_z(angle);
     }
     for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].translate(pin.x(), pin.y());
+        _points[i].translate(pin.x(), pin.y(), pin.z());
     }
     scn_valid = false;
 }
@@ -148,7 +148,7 @@ void BezierCurve::generate_curve() {
             auto x = (tm * m_x)(0,0);
             auto y = (tm * m_y)(0,0);
 
-            _points.push_back(Point2D{x, y});
+            _points.push_back(Point3D{x, y});
             t += _step;
         }
     }

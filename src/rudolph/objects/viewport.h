@@ -8,9 +8,9 @@
 namespace rudolph {
 
 class Viewport {
-    using Point2D = geometry::Point2D;
+    using Point3D = geometry::Point3D;
 public:
-    Viewport(Point2D top_left, Point2D bottom_right):
+    Viewport(Point3D top_left, Point3D bottom_right):
         _top_left{top_left},
         _bottom_right{bottom_right}
     {}
@@ -20,11 +20,11 @@ public:
         _bottom_right{_top_left.x()+size.width, _top_left.y()+size.height}
     {}
 
-    Point2D top_left() const {
+    Point3D top_left() const {
         return _top_left;
     }
 
-    Point2D bottom_right() const {
+    Point3D bottom_right() const {
         return _bottom_right;
     }
 
@@ -50,8 +50,8 @@ public:
     }
 
   private:
-    Point2D _top_left;
-    Point2D _bottom_right;
+    Point3D _top_left;
+    Point3D _bottom_right;
 };
 
 }

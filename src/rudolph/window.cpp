@@ -1,6 +1,7 @@
 #include "window.h"
 
 #include "objects/shapes.h"
+#include "objects/object3d.h"
 #include "dialog.h"
 #include "utils/command.h"
 #include "matrix.h"
@@ -14,6 +15,8 @@ namespace rudolph {
 
 using namespace rudolph::objects;
 using Size = geometry::Size;
+using Edge = geometry::Edge;
+using Face = geometry::Face;
 
 void on_close(GtkWidget* btn, gpointer* data) {
     reinterpret_cast<MainWindow*>(data)->close();
@@ -143,9 +146,43 @@ void MainWindow::execute(const std::string& cmd) {
 
         for (auto& obj: renderer.display_file()) {
             if (obj.name() == args[0]) {
-                obj.translate(atoi(args[1].c_str()), atoi(args[2].c_str()));
+                obj.translate(atoi(args[1].c_str()), atoi(args[2].c_str()), atoi(args[3].c_str()));
             }
         }
+    } else if (command == "scale") {
+        auto obj_id = args[0];
+
+        for (auto& obj: renderer.display_file()) {
+            if (obj.name() == args[0]) {
+                obj.scale(atoi(args[1].c_str()), atoi(args[1].c_str()), atoi(args[1].c_str()));
+            }
+        }
+    } else if (command == "rotate") {
+        auto obj_id = args[0];
+
+        for (auto& obj: renderer.display_file()) {
+            if (obj.name() == args[0]) {
+                obj.rotate_center(atoi(args[1].c_str()));
+            }
+        }
+    } else if (command == "rotatex") {
+        auto obj_id = args[0];
+
+        for (auto& obj: renderer.display_file()) {
+            if (obj.name() == args[0]) {
+                obj.rotate_x(atoi(args[1].c_str()));
+            }
+        }
+    } else if (command == "rotatey") {
+        auto obj_id = args[0];
+
+        for (auto& obj: renderer.display_file()) {
+            if (obj.name() == args[0]) {
+                obj.rotate_y(atoi(args[1].c_str()));
+            }
+        }
+    } else if (command == "rotatecam") {
+        renderer.render_target().rotate_camera(atoi(args[0].c_str()), atoi(args[1].c_str()), atoi(args[2].c_str()));
     }
 }
 
@@ -157,25 +194,25 @@ void MainWindow::setup()
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(0, 1);
+                rt.move_camera(0, 1, 0);
             }, &renderer},
         {"btn_down", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(0, -1);
+                rt.move_camera(0, -1, 0);
             }, &renderer},
         {"btn_left", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(-1, 0);
+                rt.move_camera(-1, 0, 0);
             }, &renderer},
         {"btn_right", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.move_camera(1, 0);
+                rt.move_camera(1, 0, 0);
             }, &renderer},
         {"btn_in", "clicked",
             [](GtkWidget* w, gpointer* data) {
@@ -219,8 +256,10 @@ void MainWindow::setup()
             }, &renderer},
         {"btn_del", "clicked",
             [](GtkWidget* w, gpointer* data) {
-                std::cout << "btn del\n";
-            }, &renderer},
+                auto& window = *reinterpret_cast<MainWindow*>(data);
+                auto& r = window.renderer;
+                r.del_object();
+            }, this},
         {"btn_update_window", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& window = *reinterpret_cast<MainWindow*>(data);
@@ -241,41 +280,92 @@ void MainWindow::setup()
         link_signal(event);
     }
 
-    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_cmdline")), "translate pol1 -30 0");
+    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_cmdline")), "translate object0 30 0 0");
 }
 
 void MainWindow::show() {
     gtk_widget_show_all(gtk_window);
 
-    renderer.add_object(Point{-10, -10});
-    //renderer.add_object(Line{0, 0, 40, 0});
-    //renderer.add_object(Line{100, 0, 100, 40});
-    auto points = std::vector<Point2D>{
-        Point2D{150-200, 150},
-        Point2D{175-200, 175},
-        Point2D{160-200, 200},
-        Point2D{140-200, 200},
-        Point2D{125-200, 175},
+    // 2D
+    //renderer.add_object(Point{100, 100});
+    renderer.add_object(Line{0, 0, 10, 0});
+    renderer.add_object(Line{0, 0, 0, 10});
+    
+    auto points = std::vector<Point3D>{
+        Point3D{150-200, 150},
+        Point3D{175-200, 175},
+        Point3D{160-200, 200},
+        Point3D{140-200, 200},
+        Point3D{125-200, 175},
     };
     renderer.add_object(Polygon(points));
 
-    points = std::vector<Point2D>{
-        Point2D{-230, 100},
-        Point2D{-160, 100},
-        Point2D{-155, 80},
-        Point2D{-210, 60},
-        Point2D{-165, 20},
-        Point2D{-235, 25}
+    points = std::vector<Point3D>{
+        Point3D{-230, 100},
+        Point3D{-160, 100},
+        Point3D{-155, 80},
+        Point3D{-210, 60},
+        Point3D{-165, 20},
+        Point3D{-235, 25}
     };
     renderer.add_object(Polygon(points, true));
 
-    points = std::vector<Point2D>{
-        Point2D{0, 0},
-        Point2D{20, 40},
-        Point2D{80, -40},
-        Point2D{100, 0}
+    points = std::vector<Point3D>{
+        Point3D{0, 0},
+        Point3D{20, 40},
+        Point3D{80, -40},
+        Point3D{100, 0}
     };
     renderer.add_object(BezierCurve(points));
+
+    // Objects 3D
+    auto xpoints = std::vector<Point3D>{
+        Point3D{200, 0, 0},
+        Point3D{300, 0, 0},
+        Point3D{300, 100, 0},
+        Point3D{200, 100, 0},
+        Point3D{200, 0, -100},
+        Point3D{300, 0, -100},
+        Point3D{300, 100, -100},
+        Point3D{200, 100, -100}
+    };
+    auto xedges = std::vector<Edge> {
+        std::make_pair(0, 1),
+        std::make_pair(1, 2),
+        std::make_pair(2, 3),
+        std::make_pair(3, 0),
+        std::make_pair(4, 0),
+        std::make_pair(1, 5),
+        std::make_pair(2, 6),
+        std::make_pair(3, 7),
+        std::make_pair(4, 5),
+        std::make_pair(5, 6),
+        std::make_pair(6, 7),
+        std::make_pair(4, 7)
+    };
+    auto xfaces = std::vector<Face> {
+        Face( 0, 1, 2 ),
+        Face( 0, 2, 3 ),
+        Face( 0, 3, 4 )
+    };
+
+    renderer.add_object(Object3D(xpoints, xedges, xfaces));
+
+    // origin axis
+    xpoints.clear();
+    xpoints.push_back(Point3D{0, 0, 0});
+    xpoints.push_back(Point3D{500, 0, 0});
+    xpoints.push_back(Point3D{0, 500, 0});
+    xpoints.push_back(Point3D{0, 0, -500});
+
+    xedges.clear();
+    xedges.push_back(std::make_pair(0, 1));
+    xedges.push_back(std::make_pair(0, 2));
+    xedges.push_back(std::make_pair(0, 3));
+
+    renderer.add_object(Object3D(xpoints, xedges, std::vector<Face>()));
+    
+    renderer.load_obj("cubinho.obj");
 
     update_list();
 }

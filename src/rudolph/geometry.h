@@ -1,6 +1,9 @@
 #ifndef RUDOLPH_GEOMETRY_H
 #define RUDOLPH_GEOMETRY_H
 
+#include <memory>
+#include <cmath>
+
 #include "matrix.h"
 
 namespace rudolph {
@@ -16,16 +19,15 @@ struct Size {
     {}
 };
 
-
-struct Point2D {
+struct Point3D {
     Matrix<double> data;
     
-    Point2D():
-        data{ *(new std::vector<double>{0, 0, 1}) }
+    Point3D():
+        data{0, 0, 0, 1}
     {}
 
-    Point2D(double x, double y):
-        data{ *(new std::vector<double>{x, y, 1}) }
+    Point3D(double x, double y, double z = 0):
+        data{x, y, z, 1}
     {}
 
     double& x() {
@@ -36,6 +38,10 @@ struct Point2D {
         return data(0, 1);
     }
 
+    double& z() {
+        return data(0, 2);
+    }
+
     const double& x() const {
         return data(0, 0);
     }
@@ -44,24 +50,75 @@ struct Point2D {
         return data(0, 1);
     }
 
-    Point2D& operator+=(const Point2D& p);
-    Point2D& operator-=(const Point2D& p);
-    bool operator==(const Point2D& p);
+    const double& z() const {
+        return data(0, 2);
+    }
 
-    void translate(double dx, double dy);
-    void scale(double sx, double sy);
-    void rotate(double angle);
+    Point3D cross(const Point3D& v) {
+        Point3D result {
+            (y()*v.z() - z()*v.y()), // i
+            (z()*v.x() - x()*v.z()), // j
+            (x()*v.y() - y()*v.x()) // k
+        };
+        return result;
+    }
 
+    double modulo() {
+        return sqrt(x()*x() + y()*y() + z()*z());
+    }
+
+    Point3D unit() {
+        auto n = modulo();
+        Point3D unitary {
+            x()/n,
+            y()/n,
+            z()/n
+        };
+        return unitary;
+    }
+
+    double angle_x() {
+        return atan(y()/z());
+    }
+
+    double angle_y() {
+        return atan(x()/z());
+    }
+
+    void to_string(std::string title = " ") {
+        std::cout << title << ": " << x() << " " << y() << " " << z() << std::endl;
+    }
+
+    Point3D& operator+=(const Point3D& p);
+    Point3D& operator-=(const Point3D& p);
+    bool operator==(const Point3D& p);
+
+    void translate(double dx, double dy, double dz = 0);
+    void scale(double sx, double sy, double sz = 1);
+    //void rotate(Eixo axis, double angle);
+    void rotate_x(double angle);
+    void rotate_y(double angle);
+    void rotate_z(double angle);
 };
 
-Point2D operator-(const Point2D&);
-Point2D operator+(const Point2D&, const Point2D&);
-Point2D operator-(const Point2D&, const Point2D&);
-Point2D operator*(const Point2D&, int);
-Point2D operator*(const Point2D&, double);
-Point2D operator*(int value, const Point2D& p);
-Point2D operator*(double value, const Point2D& p);
+Point3D operator-(const Point3D&);
+Point3D operator+(const Point3D&, const Point3D&);
+Point3D operator-(const Point3D&, const Point3D&);
+Point3D operator*(const Point3D&, int);
+Point3D operator*(const Point3D&, double);
+Point3D operator*(int value, const Point3D& p);
+Point3D operator*(double value, const Point3D& p);
 
+typedef std::pair<unsigned, unsigned> Edge;
+//typedef int[] Eixo;
+
+struct Face {
+    Face(unsigned a, unsigned b, unsigned c):
+        edges{ a, b, c }
+    {}
+
+    std::vector<unsigned> edges;
+};
 
 struct Rect {
     double x{0};
