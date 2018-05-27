@@ -47,6 +47,9 @@ public:
     void rotate_origin(double angle);
     void rotate_pin(double angle, Point3D pin);
     void rotate_center(double angle);
+    void rotate_x(double angle) {}
+    void rotate_y(double angle) {}
+    void rotate_z(double angle) {}
 
 
 private:
@@ -91,6 +94,9 @@ public:
     void rotate_origin(double angle);
     void rotate_pin(double angle, Point3D pin);
     void rotate_center(double angle);
+    void rotate_x(double angle) {}
+    void rotate_y(double angle) {}
+    void rotate_z(double angle) {}
 
 private:
     Point3D _a;
@@ -130,6 +136,9 @@ public:
     void rotate_origin(double angle);
     void rotate_pin(double angle, Point3D pin);
     void rotate_center(double angle);
+    void rotate_x(double angle) {}
+    void rotate_y(double angle) {}
+    void rotate_z(double angle) {}
 
 private:
     std::vector<Point3D> _points;
@@ -161,6 +170,9 @@ public:
     void rotate_origin(double angle);
     void rotate_pin(double angle, Point3D pin);
     void rotate_center(double angle);
+    void rotate_x(double angle) {}
+    void rotate_y(double angle) {}
+    void rotate_z(double angle) {}
 
     Matrix<double> m_t(double t);
     void generate_curve();

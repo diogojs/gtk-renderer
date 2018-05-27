@@ -165,6 +165,22 @@ void MainWindow::execute(const std::string& cmd) {
                 obj.rotate_center(atoi(args[1].c_str()));
             }
         }
+    } else if (command == "rotatex") {
+        auto obj_id = args[0];
+
+        for (auto& obj: renderer.display_file()) {
+            if (obj.name() == args[0]) {
+                obj.rotate_x(atoi(args[1].c_str()));
+            }
+        }
+    } else if (command == "rotatey") {
+        auto obj_id = args[0];
+
+        for (auto& obj: renderer.display_file()) {
+            if (obj.name() == args[0]) {
+                obj.rotate_y(atoi(args[1].c_str()));
+            }
+        }
     } else if (command == "rotatecam") {
         renderer.render_target().rotate_camera(atoi(args[0].c_str()), atoi(args[1].c_str()), atoi(args[2].c_str()));
     }
@@ -274,7 +290,7 @@ void MainWindow::show() {
     //renderer.add_object(Point{100, 100});
     renderer.add_object(Line{0, 0, 10, 0});
     renderer.add_object(Line{0, 0, 0, 10});
-    /*
+    
     auto points = std::vector<Point3D>{
         Point3D{150-200, 150},
         Point3D{175-200, 175},
@@ -348,8 +364,8 @@ void MainWindow::show() {
     xedges.push_back(std::make_pair(0, 3));
 
     renderer.add_object(Object3D(xpoints, xedges, std::vector<Face>()));
-    */
-    renderer.load_obj("cristo.obj");
+    
+    renderer.load_obj("cubinho.obj");
 
     update_list();
 }

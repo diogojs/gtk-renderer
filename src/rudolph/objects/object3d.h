@@ -42,6 +42,9 @@ public:
     void rotate_origin(double angle);
     void rotate_pin(double angle, Point3D pin);
     void rotate_center(double angle);
+    void rotate_x(double angle);
+    void rotate_y(double angle);
+    void rotate_z(double angle);
 
 private:
     std::vector<Point3D> _points;

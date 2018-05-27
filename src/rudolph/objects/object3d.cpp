@@ -75,5 +75,47 @@ void Object3D::rotate_center(double angle) {
     rotate_pin(angle, center());
 }
 
+void Object3D::rotate_x(double angle) {
+    auto pin = center();
+    for (auto i = 0u; i < _points.size(); ++i) {
+        _points[i].translate(-pin.x(), -pin.y(), -pin.z());
+    }
+    for (auto i = 0u; i < _points.size(); ++i) {
+        _points[i].rotate_x(angle);
+    }
+    for (auto i = 0u; i < _points.size(); ++i) {
+        _points[i].translate(pin.x(), pin.y(), pin.z());
+    }
+    scn_valid = false;
+}
+
+void Object3D::rotate_y(double angle) {
+    auto pin = center();
+    for (auto i = 0u; i < _points.size(); ++i) {
+        _points[i].translate(-pin.x(), -pin.y(), -pin.z());
+    }
+    for (auto i = 0u; i < _points.size(); ++i) {
+        _points[i].rotate_y(angle);
+    }
+    for (auto i = 0u; i < _points.size(); ++i) {
+        _points[i].translate(pin.x(), pin.y(), pin.z());
+    }
+    scn_valid = false;
+}
+
+void Object3D::rotate_z(double angle) {
+    auto pin = center();
+    for (auto i = 0u; i < _points.size(); ++i) {
+        _points[i].translate(-pin.x(), -pin.y(), -pin.z());
+    }
+    for (auto i = 0u; i < _points.size(); ++i) {
+        _points[i].rotate_z(angle);
+    }
+    for (auto i = 0u; i < _points.size(); ++i) {
+        _points[i].translate(pin.x(), pin.y(), pin.z());
+    }
+    scn_valid = false;
+}
+
 }
 }

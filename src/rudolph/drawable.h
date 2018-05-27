@@ -58,6 +58,18 @@ public:
         data->rotate_center(angle);
     }
 
+    void rotate_x(double angle) {
+        data->rotate_x(angle);
+    }
+
+    void rotate_y(double angle) {
+        data->rotate_y(angle);
+    }
+
+    void rotate_z(double angle) {
+        data->rotate_z(angle);
+    }
+
 private:
     /**
      * DrawableImpl components' interface
@@ -73,6 +85,9 @@ private:
         virtual void rotate_origin(double angle) = 0;
         virtual void rotate_pin(double angle, Point3D pin) = 0;
         virtual void rotate_center(double angle) = 0;
+        virtual void rotate_x(double angle) = 0;
+        virtual void rotate_y(double angle) = 0;
+        virtual void rotate_z(double angle) = 0;
     };
 
     template <typename T>
@@ -115,6 +130,18 @@ private:
 
         void rotate_center(double angle) {
             x.rotate_center(angle);
+        }
+
+        void rotate_x(double angle) {
+            x.rotate_x(angle);
+        }
+
+        void rotate_y(double angle) {
+            x.rotate_y(angle);
+        }
+
+        void rotate_z(double angle) {
+            x.rotate_z(angle);
         }
 
         T x;
