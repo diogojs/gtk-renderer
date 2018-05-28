@@ -288,46 +288,49 @@ void MainWindow::show() {
 
     // 2D
     //renderer.add_object(Point{100, 100});
-    renderer.add_object(Line{0, 0, 10, 0});
-    renderer.add_object(Line{0, 0, 0, 10});
+    renderer.add_object(Line{13, 13, 13, 12});
+    renderer.add_object(Line{13, 13, 12, 13});
+
+    renderer.add_object(Line{0, 0, 0, 1});
+    renderer.add_object(Line{0, 0, 1, 0});
     
     auto points = std::vector<Point3D>{
-        Point3D{150-200, 150},
-        Point3D{175-200, 175},
-        Point3D{160-200, 200},
-        Point3D{140-200, 200},
-        Point3D{125-200, 175},
+        Point3D{5, 5},
+        Point3D{6, 6},
+        Point3D{5.6, 6.8},
+        Point3D{4.4, 6.8},
+        Point3D{4, 6},
     };
     renderer.add_object(Polygon(points));
 
     points = std::vector<Point3D>{
-        Point3D{-230, 100},
-        Point3D{-160, 100},
-        Point3D{-155, 80},
-        Point3D{-210, 60},
-        Point3D{-165, 20},
-        Point3D{-235, 25}
+        Point3D{-2, 8},
+        Point3D{2, 8},
+        Point3D{0.8, 6},
+        Point3D{1.6, 4},
+        Point3D{-2, 5},
+        Point3D{-2.5, 7}
     };
     renderer.add_object(Polygon(points, true));
 
     points = std::vector<Point3D>{
-        Point3D{0, 0},
-        Point3D{20, 40},
-        Point3D{80, -40},
-        Point3D{100, 0}
+        Point3D{4, 2},
+        Point3D{6, 6},
+        Point3D{7, -2},
+        Point3D{9, 2}
     };
     renderer.add_object(BezierCurve(points));
 
-    // Objects 3D
+    // Cube 3D
     auto xpoints = std::vector<Point3D>{
-        Point3D{200, 0, 0},
-        Point3D{300, 0, 0},
-        Point3D{300, 100, 0},
-        Point3D{200, 100, 0},
-        Point3D{200, 0, -100},
-        Point3D{300, 0, -100},
-        Point3D{300, 100, -100},
-        Point3D{200, 100, -100}
+        Point3D{2, 2, 0},
+        Point3D{3, 2, 0},
+        Point3D{3, 3, 0},
+        Point3D{2, 3, 0},
+        Point3D{2, 2, -1},
+        Point3D{3, 2, -1},
+        Point3D{3, 3, -1},
+        Point3D{2, 3, -1}
     };
     auto xedges = std::vector<Edge> {
         std::make_pair(0, 1),
@@ -354,9 +357,9 @@ void MainWindow::show() {
     // origin axis
     xpoints.clear();
     xpoints.push_back(Point3D{0, 0, 0});
-    xpoints.push_back(Point3D{500, 0, 0});
-    xpoints.push_back(Point3D{0, 500, 0});
-    xpoints.push_back(Point3D{0, 0, -500});
+    xpoints.push_back(Point3D{5, 0, 0});
+    xpoints.push_back(Point3D{0, 5, 0});
+    xpoints.push_back(Point3D{0, 0, -5});
 
     xedges.clear();
     xedges.push_back(std::make_pair(0, 1));

@@ -156,7 +156,7 @@ void Renderer::clear()
 }
 
 RenderTarget::RenderTarget():
-    camera_window{Point3D{-5, -5, 0}, Point3D{10, 10, 0}},
+    camera_window{Point3D{0, 0, 0}, Point3D{26, 26, 0}},
     viewport{Size{520, 520}},
     transform{calc_transform()},
     back_buffer_{
