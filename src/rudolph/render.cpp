@@ -122,9 +122,6 @@ namespace {
     }
 }
 
-int RenderTarget::counter = 0;
-bool RenderTarget::log = false;
-
 Renderer::Renderer(GtkWidget* parent):
     parent{parent},
     target{}
@@ -156,7 +153,7 @@ void Renderer::clear()
 }
 
 RenderTarget::RenderTarget():
-    camera_window{Point3D{0, 0, 0}, Point3D{26, 26, 0}},
+    camera_window{Size{26, 26}},
     viewport{Size{520, 520}},
     transform{calc_transform()},
     back_buffer_{
@@ -171,8 +168,6 @@ RenderTarget::~RenderTarget() {
 
 Point3D RenderTarget::world_to_normal(double xw, double yw) {
     Matrix<double> coord{xw, yw, 1};
-    if (RenderTarget::log)
-        std::cout << "xw: " << xw << " yw: " << yw << std::endl;
     
     double cos_vy = std::cos(camera_window.angle());
     double sin_vy = std::sin(camera_window.angle());
@@ -180,11 +175,6 @@ Point3D RenderTarget::world_to_normal(double xw, double yw) {
     double cam_y = camera_window.bottom_left().y();
     double cam_width = camera_window.width();
     double cam_height = camera_window.height();
-
-    if (RenderTarget::log) {
-        camera_window.bottom_left().to_string("cam_xy");
-        std::cout << "cam_width,height: " << cam_width << " , " << cam_height << std::endl;
-    }
 
     // Normalized Coordinates
     // Translate to origin, rotate, and scale
@@ -195,16 +185,10 @@ Point3D RenderTarget::world_to_normal(double xw, double yw) {
         },
         3, 3
     );
-    if (RenderTarget::log)
-        normalizer.to_string("normalizer");
-    
+
     coord = coord * normalizer;
 
-    auto result = Point3D{coord(0, 0), coord(0, 1)};
-    if (RenderTarget::log)
-        result.to_string("result in");
-
-    return result;
+    return Point3D{coord(0, 0), coord(0, 1)};
 }
 
 Point3D RenderTarget::world_to_normal(Point3D p) {
@@ -243,31 +227,14 @@ Point3D RenderTarget::world_to_viewport(Point3D p) {
 }
 
 Point3D RenderTarget::world_to_2d(Point3D p) {
-    RenderTarget::counter++;
-    //if (RenderTarget::counter % 201 == 0 || RenderTarget::counter % 202 == 0)
-    //    RenderTarget::log = true;
-
     Matrix<double> coord{p.x(), p.y(), p.z(), 1};
-    if (RenderTarget::log)
-        p.to_string("p");
     coord = coord * transform;
 
-    auto transformed_p = Point3D{coord(0, 0), coord(0, 1), coord(0, 2)};
-    if (RenderTarget::log)
-        transformed_p.to_string("transformed_p");
-
-    auto result = world_to_normal(transformed_p);
-    if (RenderTarget::log)
-        result.to_string("result final");
-
-    RenderTarget::log = false;
-
-    return result;
+    return world_to_normal(Point3D{coord(0, 0), coord(0, 1), coord(0, 2)});
 }
 
 Matrix<double> RenderTarget::calc_transform() {
     auto vrp = camera_window.vrp();
-    //std::cout << "vrp: " << vrp.x() << " " << vrp.y() << " " << vrp.z() << std::endl;
 
     Matrix<double> trans(
         {
@@ -278,18 +245,13 @@ Matrix<double> RenderTarget::calc_transform() {
         },
         4, 4
     );
-    //trans.to_string("trans:");
 
     auto u = camera_window.bottom_right() - camera_window.bottom_left();
-    //u.to_string("u");
     auto v = camera_window.top_left() - camera_window.bottom_left();
-    //v.to_string("v");
     auto normal = u.cross(v).unit();
-    //normal.to_string("normal");
 
     // Rotate in x
     auto tx = normal.angle_x();
-    //std::cout << "angle_x: " << tx << std::endl;
     Matrix<double> rotx(
         {
         1, 0, 0, 0,
@@ -299,10 +261,8 @@ Matrix<double> RenderTarget::calc_transform() {
         },
         4, 4
     );
-    //rotx.to_string("rotx:");
 
     auto ty = normal.angle_y();
-    //std::cout << "angle_y: " << ty << std::endl;
     Matrix<double> roty(
         {
         cos(ty), 0, -sin(ty), 0,
@@ -312,11 +272,8 @@ Matrix<double> RenderTarget::calc_transform() {
         },
         4, 4
     );
-    //roty.to_string("roty:");
 
-    auto _transform = trans * rotx * roty;
-    //_transform.to_string("_transform:");
-    return _transform;
+    return (trans * rotx * roty);
 }
 
 void RenderTarget::clear() {
@@ -464,7 +421,7 @@ void RenderTarget::rotate_camera(double ax, double ay, double az) {
 
 void RenderTarget::zoom(double ratio) {
     camera_window.zoom(ratio);
-    calc_transform();
+    transform = calc_transform();
 }
 
 void Renderer::invalidate() {
@@ -534,6 +491,6 @@ void Renderer::load_obj(std::string filename) {
 
             idx_offset += fv;
         }
-        add_object(objects::Object3D(points, edges, faces, shape.name));
+        add_object(Object3D(points, edges, faces, shape.name));
     }
 }

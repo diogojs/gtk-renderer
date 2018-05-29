@@ -79,8 +79,6 @@ private:
     Matrix<double> transform;
     cairo_surface_t* back_buffer_ = nullptr;
     double _step = 1;
-    static int counter;
-    static bool log;
 };
 
 /**

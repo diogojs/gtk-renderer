@@ -1,9 +1,9 @@
 #include "object3d.h"
+#include "../render.h"
 
 #include <iostream>
 
 namespace rudolph {
-namespace objects {
 
 unsigned int Object3D::objects_id = 0;
 
@@ -117,5 +117,4 @@ void Object3D::rotate_z(double angle) {
     scn_valid = false;
 }
 
-}
 }

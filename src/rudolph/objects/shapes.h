@@ -8,7 +8,6 @@
 #include "../matrix.h"
 
 namespace rudolph {
-namespace objects {
 
 using Point3D = geometry::Point3D;
 
@@ -191,7 +190,6 @@ private:
     static const Matrix<double> matrix_b;
 };
 
-}
 }
 
 #endif

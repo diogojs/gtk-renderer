@@ -13,7 +13,6 @@
 
 namespace rudolph {
 
-using namespace rudolph::objects;
 using Size = geometry::Size;
 using Edge = geometry::Edge;
 using Face = geometry::Face;
@@ -183,6 +182,8 @@ void MainWindow::execute(const std::string& cmd) {
         }
     } else if (command == "rotatecam") {
         renderer.render_target().rotate_camera(atoi(args[0].c_str()), atoi(args[1].c_str()), atoi(args[2].c_str()));
+    } else if (command == "movecam") {
+        renderer.render_target().move_camera(atoi(args[0].c_str()), atoi(args[1].c_str()), atoi(args[2].c_str()));
     }
 }
 
@@ -368,7 +369,7 @@ void MainWindow::show() {
 
     renderer.add_object(Object3D(xpoints, xedges, std::vector<Face>()));
     
-    renderer.load_obj("cubinho.obj");
+    renderer.load_obj("../cubinho.obj");
 
     update_list();
 }

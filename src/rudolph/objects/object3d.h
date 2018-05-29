@@ -2,15 +2,15 @@
 #define RUDOLPH_OBJECTS_3D_H
 
 #include <vector>
-#include "../render.h"
 #include "../geometry.h"
 
 namespace rudolph {
-namespace objects {
 
 using Point3D = geometry::Point3D;
 using Edge = geometry::Edge;
 using Face = geometry::Face;
+
+class RenderTarget;
 
 class Object3D {
 public:
@@ -46,7 +46,7 @@ public:
     void rotate_y(double angle);
     void rotate_z(double angle);
 
-private:
+protected:
     std::vector<Point3D> _points;
     std::vector<Point3D> scn_points;
     std::vector<Edge> _edges;
@@ -60,7 +60,6 @@ private:
     static unsigned int objects_id;
 };
 
-}
 }
 
 #endif

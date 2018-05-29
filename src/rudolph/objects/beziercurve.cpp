@@ -3,7 +3,6 @@
 #include <stdexcept>
 
 namespace rudolph {
-namespace objects {
 
 unsigned int BezierCurve::bezier_id = 0;
 const Matrix<double> BezierCurve::matrix_b{
@@ -155,5 +154,4 @@ void BezierCurve::generate_curve() {
 }
 
 // end namespaces
-}
 }
