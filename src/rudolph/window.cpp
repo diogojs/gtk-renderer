@@ -231,13 +231,13 @@ void MainWindow::setup()
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.window().rotate(algebra::pi/18);
+                rt.camera().rotate(10);
             }, &renderer},
         {"btn_rot_right", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.window().rotate(-algebra::pi/18);
+                rt.camera().rotate(-10);
             }, &renderer},
 
         {"btn_new", "clicked",
@@ -379,7 +379,7 @@ void MainWindow::refresh() {
         (double)std::stoi(gtkentry_value(gtk_builder, "edt_window_width")),
         (double)std::stoi(gtkentry_value(gtk_builder, "edt_window_height"))
     };
-    renderer.render_target().window().resize(window_size);
+    renderer.render_target().camera().resize(window_size);
 }
 
 void MainWindow::update_list() {

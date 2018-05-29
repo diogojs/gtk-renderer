@@ -104,17 +104,7 @@ void Object3D::rotate_y(double angle) {
 }
 
 void Object3D::rotate_z(double angle) {
-    auto pin = center();
-    for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].translate(-pin.x(), -pin.y(), -pin.z());
-    }
-    for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].rotate_z(angle);
-    }
-    for (auto i = 0u; i < _points.size(); ++i) {
-        _points[i].translate(pin.x(), pin.y(), pin.z());
-    }
-    scn_valid = false;
+    rotate_center(angle);
 }
 
 }

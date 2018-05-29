@@ -171,8 +171,12 @@ Point3D RenderTarget::world_to_normal(double xw, double yw) {
     
     double cos_vy = std::cos(camera_window.angle());
     double sin_vy = std::sin(camera_window.angle());
-    double cam_x = camera_window.bottom_left().x();
-    double cam_y = camera_window.bottom_left().y();
+
+    auto cam_bot = camera_window.bottom_left();
+    Matrix<double> cam_coord{cam_bot.x(), cam_bot.y(), cam_bot.z(), 1};
+    cam_coord = cam_coord * transform;
+    double cam_x = cam_coord(0, 0);
+    double cam_y = cam_coord(0, 1);
     double cam_width = camera_window.width();
     double cam_height = camera_window.height();
 

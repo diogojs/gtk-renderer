@@ -47,11 +47,11 @@ public:
     void move_camera(double dx, double dy, double dz);
     void rotate_camera(double ax, double ay, double az);
 
-    CameraWindow& window() {
+    CameraWindow& camera() {
         return camera_window;
     }
 
-    const CameraWindow& window() const {
+    const CameraWindow& camera() const {
         return camera_window;
     }
 

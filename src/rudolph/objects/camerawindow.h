@@ -18,6 +18,12 @@ public:
             std::vector<Face>{Face( 0, 1, 2 ), Face(0, 2, 3)},
             "Camera"
         },
+        scn_cam{
+            std::vector<Point3D>{Point3D(0, 0), Point3D(26, 0), Point3D(26, 26), Point3D(0, 26)},
+            std::vector<Edge>{std::make_pair(0, 1), std::make_pair(1, 2), std::make_pair(2, 3), std::make_pair(3, 0)},
+            std::vector<Face>{Face( 0, 1, 2 ), Face(0, 2, 3)},
+            "SCNCamera"
+        },
         _angle{0}
     {}
 
@@ -27,6 +33,12 @@ public:
             std::vector<Edge>{std::make_pair(0, 1), std::make_pair(1, 2), std::make_pair(2, 3), std::make_pair(3, 0)},
             std::vector<Face>{Face( 0, 1, 2 ), Face(0, 2, 3)},
             "Camera"
+        },
+        scn_cam{
+            std::vector<Point3D>{bottom_left, bottom_right, top_right, top_left},
+            std::vector<Edge>{std::make_pair(0, 1), std::make_pair(1, 2), std::make_pair(2, 3), std::make_pair(3, 0)},
+            std::vector<Face>{Face( 0, 1, 2 ), Face(0, 2, 3)},
+            "SCNCamera"
         },
         _angle{0}
     {
@@ -43,6 +55,12 @@ public:
             std::vector<Edge>{std::make_pair(0, 1), std::make_pair(1, 2), std::make_pair(2, 3), std::make_pair(3, 0)},
             std::vector<Face>{Face( 0, 1, 2 ), Face(0, 2, 3)},
             "Camera"
+        },
+        scn_cam{
+            std::vector<Point3D>{Point3D(0, 0), Point3D(size.width, 0), Point3D(size.width, size.height), Point3D(0, size.height)},
+            std::vector<Edge>{std::make_pair(0, 1), std::make_pair(1, 2), std::make_pair(2, 3), std::make_pair(3, 0)},
+            std::vector<Face>{Face( 0, 1, 2 ), Face(0, 2, 3)},
+            "SCNCamera"
         },
         _angle{0}
     {}
@@ -100,7 +118,8 @@ public:
     void set_width(double width);
     void set_height(double height);
     void rotate(double da);
-
+    void rotate_z(double angle);
+    
     Point3D vrp();
     
     void resize(double width, double height) {
@@ -112,9 +131,9 @@ public:
         resize(size.width, size.height);
     }
 
-
   private:
     double _angle;
+    Object3D scn_cam;
 };
 
 }
