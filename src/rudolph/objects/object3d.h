@@ -45,6 +45,7 @@ public:
     void rotate_x(double angle);
     void rotate_y(double angle);
     void rotate_z(double angle);
+    void rotate(double angle, Point3D pin, Point3D axis);
 
 protected:
     std::vector<Point3D> _points;

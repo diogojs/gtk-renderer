@@ -1,5 +1,6 @@
 #include "object3d.h"
 #include "../render.h"
+#include "../../algebra.h"
 
 #include <iostream>
 
@@ -105,6 +106,22 @@ void Object3D::rotate_y(double angle) {
 
 void Object3D::rotate_z(double angle) {
     rotate_center(angle);
+}
+
+void Object3D::rotate(double angle, Point3D pin, Point3D axis) {
+    for (auto i = 0u; i < _points.size(); ++i) {
+        auto ax = std::atan(axis.y()/axis.z());
+        auto ay = std::atan(axis.z()/axis.x());
+        _points[i].translate(-pin.x(), -pin.y(), -pin.z());
+        _points[i].rotate_x(ax);
+        _points[i].rotate_y(ay);
+        _points[i].rotate_x(angle);
+        _points[i].rotate_y(-ay);
+        _points[i].rotate_x(-ax);
+        _points[i].translate(pin.x(), pin.y(), pin.z());
+    }
+
+    scn_valid = false;
 }
 
 }

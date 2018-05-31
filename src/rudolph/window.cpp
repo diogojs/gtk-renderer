@@ -88,8 +88,6 @@ void show_popup(GtkTreeView*& tree,
     if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
         auto value = extract_tree_value(model, iter);
     }
-
-    //gtk_menu_popup_at_pointer(popup, nullptr);
 }
 
 bool on_mouse_press(GtkWidget* widget, GdkEventButton* event, gpointer* data) {
@@ -219,25 +217,25 @@ void MainWindow::setup()
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.zoom(-0.1);
+                rt.zoom(0.9);
             }, &renderer},
         {"btn_out", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.zoom(0.1);
+                rt.zoom(1.1);
             }, &renderer},
         {"btn_rot_left", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.camera().rotate(10);
+                rt.camera().rotate(0, 0, 10);
             }, &renderer},
         {"btn_rot_right", "clicked",
             [](GtkWidget* w, gpointer* data) {
                 auto& r = *reinterpret_cast<Renderer*>(data);
                 auto& rt = r.render_target();
-                rt.camera().rotate(-10);
+                rt.camera().rotate(0, 0, -10);
             }, &renderer},
 
         {"btn_new", "clicked",
@@ -281,14 +279,15 @@ void MainWindow::setup()
         link_signal(event);
     }
 
-    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_cmdline")), "translate object0 30 0 0");
+    gtk_entry_set_text(GTK_ENTRY(get_component(gtk_builder, "edt_cmdline")), "translate Cube 2 0 0");
 }
 
 void MainWindow::show() {
     gtk_widget_show_all(gtk_window);
 
+    /*
     // 2D
-    //renderer.add_object(Point{100, 100});
+    renderer.add_object(Point{100, 100});
     renderer.add_object(Line{13, 13, 13, 12});
     renderer.add_object(Line{13, 13, 12, 13});
 
@@ -321,17 +320,17 @@ void MainWindow::show() {
         Point3D{9, 2}
     };
     renderer.add_object(BezierCurve(points));
-
+    */
     // Cube 3D
     auto xpoints = std::vector<Point3D>{
+        Point3D{2, 2, 2},
+        Point3D{4, 2, 2},
+        Point3D{4, 4, 2},
+        Point3D{2, 4, 2},
         Point3D{2, 2, 0},
-        Point3D{3, 2, 0},
-        Point3D{3, 3, 0},
-        Point3D{2, 3, 0},
-        Point3D{2, 2, -1},
-        Point3D{3, 2, -1},
-        Point3D{3, 3, -1},
-        Point3D{2, 3, -1}
+        Point3D{4, 2, 0},
+        Point3D{4, 4, 0},
+        Point3D{2, 4, 0}
     };
     auto xedges = std::vector<Edge> {
         std::make_pair(0, 1),
@@ -353,23 +352,23 @@ void MainWindow::show() {
         Face( 0, 3, 4 )
     };
 
-    renderer.add_object(Object3D(xpoints, xedges, xfaces));
+    renderer.add_object(Object3D(xpoints, xedges, xfaces, "Cube"));
 
     // origin axis
     xpoints.clear();
     xpoints.push_back(Point3D{0, 0, 0});
-    xpoints.push_back(Point3D{5, 0, 0});
-    xpoints.push_back(Point3D{0, 5, 0});
-    xpoints.push_back(Point3D{0, 0, -5});
+    xpoints.push_back(Point3D{10, 0, 0});
+    xpoints.push_back(Point3D{0, 10, 0});
+    xpoints.push_back(Point3D{0, 0, 10});
 
     xedges.clear();
     xedges.push_back(std::make_pair(0, 1));
     xedges.push_back(std::make_pair(0, 2));
     xedges.push_back(std::make_pair(0, 3));
 
-    renderer.add_object(Object3D(xpoints, xedges, std::vector<Face>()));
+    renderer.add_object(Object3D(xpoints, xedges, std::vector<Face>(), "Origin"));
     
-    renderer.load_obj("../cubinho.obj");
+    //renderer.load_obj("../cubinho.obj");
 
     update_list();
 }

@@ -40,10 +40,10 @@ private:
     void clip_pol_aux(std::vector<Point3D>& new_polygon, Point3D a, Point3D b);
     Point3D intersection(Point3D e1, Point3D e2, Point3D a, Point3D b);
 
-    const double edge_left = -1;
-    const double edge_right = 1;
-    const double edge_up = -1;
-    const double edge_down = 1;
+    const double edge_left = 0;
+    const double edge_right = 2;
+    const double edge_up = 0;
+    const double edge_down = 2;
     std::vector<Point3D> clip_window{
         Point3D{edge_left, edge_up},
         Point3D{edge_right, edge_up},

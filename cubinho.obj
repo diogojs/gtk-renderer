@@ -1,7 +1,7 @@
 # Blender v2.79 (sub 0) OBJ File: 'cubinho.blend'
 # www.blender.org
 mtllib cubinho.mtl
-o Cube
+o CubeObj
 v 1.000000 -1.000000 -1.000000
 v 1.000000 -1.000000 1.000000
 v -1.000000 -1.000000 1.000000

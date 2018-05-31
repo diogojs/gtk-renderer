@@ -15,18 +15,16 @@ void CameraWindow::move(double dx, double dy, double dz) {
     top_right() += d;
     top_left() += d;
     bottom_right() += d;
-
-    //center().to_string("center");
 }
 
 void CameraWindow::zoom(double step) {
-    auto d = (top_right() - bottom_left()) * step;
-
-    top_right() += d;
+    scale(step, step, step);
 }
 
-void CameraWindow::rotate(double da) {
-    rotate_z(da);
+void CameraWindow::rotate(double ax, double ay, double az) {
+    Object3D::rotate_x(ax);
+    Object3D::rotate_y(ay);
+    rotate_z(az);
 }
 
 void CameraWindow::rotate_z(double da) {

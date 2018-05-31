@@ -160,7 +160,12 @@ RenderTarget::RenderTarget():
         cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
                                    viewport.width()+20,
                                    viewport.height()+20) }
-{}
+{
+    move_camera(-13, -13, 10);
+    rotate_camera(0, -40, 0);
+    rotate_camera(-35, 0, 16);
+    move_camera(0, 4, 4);
+}
 
 RenderTarget::~RenderTarget() {
     cairo_surface_destroy(surface());
@@ -202,12 +207,22 @@ Point3D RenderTarget::world_to_normal(Point3D p) {
 Point3D RenderTarget::normal_to_viewport(double xw, double yw) {
     Matrix<double> coord{xw, yw, 1};
 
-    // Viewport Coordinates
+    /* Viewport Coordinates Centralized
     Matrix<double> viewporter(
         {
         (double)viewport.width()/2, 0, 0,
         0, (double)-viewport.height()/2, 0,
         viewport.top_left().x()+(double)viewport.width()/2, viewport.top_left().y()+(double)viewport.height()/2, 1
+        },
+        3, 3
+    );
+    */
+
+    Matrix<double> viewporter(
+        {
+        (double)viewport.width()/2, 0, 0,
+        0, (double)-viewport.height()/2, 0,
+        viewport.top_left().x(), viewport.top_left().y()+(double)viewport.height(), 1
         },
         3, 3
     );
@@ -417,9 +432,7 @@ void RenderTarget::move_camera(double dx, double dy, double dz) {
 }
 
 void RenderTarget::rotate_camera(double ax, double ay, double az) {
-    camera_window.rotate_x(ax);
-    camera_window.rotate_y(ay);
-    camera_window.rotate_z(az);
+    camera_window.rotate(ax, ay, az);
     transform = calc_transform();
 }
 
